@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "591557944598",
+    "firebase_url": "https://sas-android-73b28.firebaseio.com",
+    "project_id": "sas-android-73b28",
+    "storage_bucket": "sas-android-73b28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591557944598:android:aae2d49868567af9",
+        "android_client_info": {
+          "package_name": "com.minorproject.admin.sas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591557944598-3qqvv4ulnq400la8ucqin3t0lsu8hipn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.minorproject.admin.sas",
+            "certificate_hash": "448d26df25fbb7f60586e80db6e9aa9769f1d2fa"
+          }
+        },
+        {
+          "client_id": "591557944598-qiekq1v0afnbf0bfoh7mi2ijni7cejli.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSXqNTmHw7a9GWfnZVGginMh6_C-_3W40"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591557944598-qiekq1v0afnbf0bfoh7mi2ijni7cejli.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
