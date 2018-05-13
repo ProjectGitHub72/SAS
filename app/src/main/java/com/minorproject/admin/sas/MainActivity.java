@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -14,9 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,20 +35,29 @@ public class MainActivity extends AppCompatActivity
 
 
     private static final int RC_SIGN_IN = 1;
-
-   //     TextView that is displayed when the list is empty
-
-    private TextView mEmptyStateTextView;
-    private static int noInternet =-1;
+    private static boolean noInternet =true;
+    private static String mUsername;
+    private static String mUserEmail;
+    private static Uri mUserPhotoUri;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+
+
+
+
+    private TextView mEmptyStateTextView;
+    private ImageView mUserImageView;
+    private TextView mUserNameView;
+    private TextView mUserEmailView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -69,6 +82,8 @@ public class MainActivity extends AppCompatActivity
         // If there is a network connection, fetch data
         if (!(networkInfo != null && networkInfo.isConnected())) {
 
+            noInternet=true;
+            setContentView(R.layout.activity_main);
             mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
             mEmptyStateTextView.setText("CONNECTION NOT AVAILABLE");
         }
@@ -76,7 +91,7 @@ public class MainActivity extends AppCompatActivity
 
             TextView trialView = findViewById(R.id.trial_view);
             trialView.setText("Welcome!!!");
-            noInternet = 0;
+            noInternet = false;
             mFirebaseAuth = FirebaseAuth.getInstance();
 
             mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -85,9 +100,13 @@ public class MainActivity extends AppCompatActivity
 
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     if (user != null) {
-                        //Signed in
 
-                        //      onSignedInInitialize(user.getDisplayName());
+                        // Name, email address, and profile photo Url
+                        mUsername = user.getDisplayName();
+                        mUserEmail = user.getEmail();
+                        mUserPhotoUri = user.getPhotoUrl();
+
+                        onSignedInInitializeNavSide();
 
                     } else {
                         //Signed out
@@ -116,7 +135,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if(noInternet==0)
+        if(!noInternet)
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
@@ -139,7 +158,7 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Signing In", Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Failed Sign In", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Sign In", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -183,13 +202,32 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-  /*  private void onSignedInInitialize(String username){
-        mUsername = username;
-        attachDatabaseReadListener();
+    private void onSignedInInitializeNavSide(){
+
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+
+
+        mUserImageView = headerView.findViewById(R.id.userImageView);
+        mUserNameView = headerView.findViewById(R.id.userNameView);
+        mUserEmailView = headerView.findViewById(R.id.userEmailView);
+
+        mUserNameView.setText(mUsername);
+        mUserEmailView.setText(mUserEmail);
+
+        Glide
+                .with(this)     //TODO:FOR SINGLE ACTIVITY
+                .load(mUserPhotoUri) // the uri you got from Firebase
+                .centerCrop()
+                .into(mUserImageView); //Your imageView variable
+
+
+
 
     }
 
-    private void onSignedOutCleanup(){
+ /*   private void onSignedOutCleanup(){
         mUsername=ANONYMOUS;
         mMessageAdapter.clear();
         detachDatabaseReadListener();
