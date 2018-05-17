@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity
 
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.getMenu().getItem(1).setChecked(true);
+
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
 
@@ -180,37 +182,9 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        //TODO
-        // Handle bottom_navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_profile) {
-
-        } else if (id == R.id.nav_logout) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
 
     //TODO
-
-
-
 
 
 
@@ -262,8 +236,18 @@ public class MainActivity extends AppCompatActivity
         if(requestCode ==RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Signing In", Toast.LENGTH_SHORT).show();
+
+
+                NavigationView navigationView = findViewById(R.id.nav_view);
+                navigationView.getMenu().getItem(0).setChecked(true);
+
+                BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+                bottomNavigationView.getMenu().getItem(1).setChecked(true);
+
+
+
             } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Sign In", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "App Exit", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -271,23 +255,67 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        //TODO
+        // Handle bottom_navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_dashboard) {
+
+        } else if (id == R.id.nav_news) {
+
+        } else if (id == R.id.nav_performance) {
+
+        } else if (id == R.id.nav_result) {
+
+        } else if (id == R.id.nav_attendance) {
+
+        } else if (id == R.id.nav_users) {
+
+        } else if (id == R.id.nav_profile) {
+
+        } else if (id == R.id.nav_logout) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+
+
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Fragment selectedFragment = null;
+                    NavigationView navigationView =findViewById(R.id.nav_view);
 
                     switch (item.getItemId()) {
-                        case R.id.nav_home:
+                        case R.id.nav_bottom_performance:
                             selectedFragment = new HomeFragment();
+                            navigationView.getMenu().getItem(2).setChecked(true);
+
                             break;
-                        case R.id.nav_dashboard:
+                        case R.id.nav_bottom_dashboard:
                             selectedFragment = new HomeFragment();
+                           navigationView.getMenu().getItem(0).setChecked(true);
+
                             break;
-                        case R.id.nav_search:
+                        case R.id.nav_bottom_news:
                             selectedFragment = new HomeFragment();
+                            navigationView.getMenu().getItem(1).setChecked(true);
+
                             break;
                     }
+
+
+                    
 
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                             selectedFragment).commit();
