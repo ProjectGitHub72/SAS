@@ -237,13 +237,7 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Signing In", Toast.LENGTH_SHORT).show();
 
-
-                NavigationView navigationView = findViewById(R.id.nav_view);
-                navigationView.getMenu().getItem(0).setChecked(true);
-
-                BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-                bottomNavigationView.getMenu().getItem(1).setChecked(true);
-
+                    setDefaultViews();
 
 
             } else if (resultCode == RESULT_CANCELED) {
@@ -263,14 +257,32 @@ public class MainActivity extends AppCompatActivity
         //TODO
         // Handle bottom_navigation view item clicks here.
         int id = item.getItemId();
+        int bottomSelectedItemIndex;
+        BottomNavigationView bottomNavigationView =findViewById(R.id.bottom_navigation);
+
+
+
+        for(bottomSelectedItemIndex=0;bottomSelectedItemIndex<=2;bottomSelectedItemIndex++)
+            bottomNavigationView.getMenu().getItem(bottomSelectedItemIndex).setCheckable(true);
+
 
         if (id == R.id.nav_dashboard) {
+            bottomNavigationView.getMenu().getItem(1).setChecked(true);
 
         } else if (id == R.id.nav_news) {
+            bottomNavigationView.getMenu().getItem(2).setChecked(true);
+
 
         } else if (id == R.id.nav_performance) {
+            bottomNavigationView.getMenu().getItem(0).setChecked(true);
 
-        } else if (id == R.id.nav_result) {
+
+        } else{
+            for(bottomSelectedItemIndex=0;bottomSelectedItemIndex<=2;bottomSelectedItemIndex++)
+            bottomNavigationView.getMenu().getItem(bottomSelectedItemIndex).setCheckable(false);
+        }
+
+         if (id == R.id.nav_result) {
 
         } else if (id == R.id.nav_attendance) {
 
@@ -294,7 +306,14 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Fragment selectedFragment = null;
+                    int bottomSelectedItemIndex;
                     NavigationView navigationView =findViewById(R.id.nav_view);
+                    BottomNavigationView bottomNavigationView =findViewById(R.id.bottom_navigation);
+
+
+                    for(bottomSelectedItemIndex=0;bottomSelectedItemIndex<=2;bottomSelectedItemIndex++)
+                        bottomNavigationView.getMenu().getItem(bottomSelectedItemIndex).setCheckable(true);
+
 
                     switch (item.getItemId()) {
                         case R.id.nav_bottom_performance:
@@ -323,6 +342,15 @@ public class MainActivity extends AppCompatActivity
                     return true;
                 }
             };
+
+    private void setDefaultViews(){
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.getMenu().getItem(0).setChecked(true);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.getMenu().getItem(1).setChecked(true);
+    }
 
 
 }
