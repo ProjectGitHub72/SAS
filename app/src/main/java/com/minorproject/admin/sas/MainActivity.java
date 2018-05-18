@@ -115,6 +115,9 @@ public class MainActivity extends AppCompatActivity
                         mUserPhotoUri = user.getPhotoUrl();
 
                         onSignedInInitializeNavSide();
+                        setDefaultViews();
+                        AttachFragmentToItem(new DashboardFragment());
+
 
                     } else {
                         //Signed out
@@ -177,15 +180,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-
-
-
-
-
     //TODO
-
 
 
     private void onSignedInInitializeNavSide(){
@@ -237,8 +232,6 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Signing In", Toast.LENGTH_SHORT).show();
 
-                    setDefaultViews();
-
 
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "App Exit", Toast.LENGTH_SHORT).show();
@@ -258,6 +251,7 @@ public class MainActivity extends AppCompatActivity
         // Handle bottom_navigation view item clicks here.
         int id = item.getItemId();
         int bottomSelectedItemIndex;
+        Fragment selectedFragment=new DashboardFragment();
         BottomNavigationView bottomNavigationView =findViewById(R.id.bottom_navigation);
 
 
@@ -268,34 +262,49 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_dashboard) {
             bottomNavigationView.getMenu().getItem(1).setChecked(true);
+            selectedFragment = new DashboardFragment();
 
         } else if (id == R.id.nav_news) {
             bottomNavigationView.getMenu().getItem(2).setChecked(true);
+            selectedFragment = new NewsFragment();
 
 
         } else if (id == R.id.nav_performance) {
             bottomNavigationView.getMenu().getItem(0).setChecked(true);
+            selectedFragment = new PerformanceFragment();
 
 
-        } else{
-            for(bottomSelectedItemIndex=0;bottomSelectedItemIndex<=2;bottomSelectedItemIndex++)
-            bottomNavigationView.getMenu().getItem(bottomSelectedItemIndex).setCheckable(false);
+        } else {
+            for (bottomSelectedItemIndex = 0; bottomSelectedItemIndex <= 2; bottomSelectedItemIndex++)
+                bottomNavigationView.getMenu().getItem(bottomSelectedItemIndex).setCheckable(false);
+
+
+            if (id == R.id.nav_result) {
+
+                selectedFragment = new ResultFragment();
+
+            } else if (id == R.id.nav_attendance) {
+
+                selectedFragment = new AttendanceFragment();
+
+            } else if (id == R.id.nav_authorize) {
+
+                selectedFragment = new AuthorizeFragment();
+
+            } else if (id == R.id.nav_profile) {
+
+                selectedFragment = new ProfileFragment();
+
+            } else if (id == R.id.nav_logout) {
+
+                AuthUI.getInstance().signOut(this);
+                return true;
+            }
         }
-
-         if (id == R.id.nav_result) {
-
-        } else if (id == R.id.nav_attendance) {
-
-        } else if (id == R.id.nav_users) {
-
-        } else if (id == R.id.nav_profile) {
-
-        } else if (id == R.id.nav_logout) {
-
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
+        AttachFragmentToItem(selectedFragment);
         return true;
     }
 
@@ -317,27 +326,23 @@ public class MainActivity extends AppCompatActivity
 
                     switch (item.getItemId()) {
                         case R.id.nav_bottom_performance:
-                            selectedFragment = new HomeFragment();
+                            selectedFragment = new PerformanceFragment();
                             navigationView.getMenu().getItem(2).setChecked(true);
 
                             break;
                         case R.id.nav_bottom_dashboard:
-                            selectedFragment = new HomeFragment();
-                           navigationView.getMenu().getItem(0).setChecked(true);
+                            selectedFragment = new DashboardFragment();
+                            navigationView.getMenu().getItem(0).setChecked(true);
 
                             break;
                         case R.id.nav_bottom_news:
-                            selectedFragment = new HomeFragment();
+                            selectedFragment = new NewsFragment();
                             navigationView.getMenu().getItem(1).setChecked(true);
 
                             break;
                     }
 
-
-                    
-
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                            selectedFragment).commit();
+                    AttachFragmentToItem(selectedFragment);
 
                     return true;
                 }
@@ -350,6 +355,14 @@ public class MainActivity extends AppCompatActivity
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.getMenu().getItem(1).setChecked(true);
+    }
+
+    private void AttachFragmentToItem(Fragment selectedFragment){
+
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                selectedFragment).commit();
+
     }
 
 

@@ -28,7 +28,7 @@
             android:title="Attendance" />
 
         <item
-            android:id="@+id/nav_users"
+            android:id="@+id/nav_authorize"
             android:icon="@drawable/ic_users_black_24dp"
             android:title="Authorize" />
 
