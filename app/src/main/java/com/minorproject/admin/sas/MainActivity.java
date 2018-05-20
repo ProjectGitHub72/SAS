@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseUser mUser;
 
 
 
@@ -72,9 +73,9 @@ public class MainActivity extends AppCompatActivity
 
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.getMenu().getItem(1).setChecked(true);
-
         bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+        setDefaultViews();
 
 
 
@@ -97,8 +98,7 @@ public class MainActivity extends AppCompatActivity
         }
         else {
 
-            TextView trialView = findViewById(R.id.trial_view);
-            trialView.setText("Welcome!!!");
+
             noInternet = false;
             mFirebaseAuth = FirebaseAuth.getInstance();
 
@@ -106,17 +106,16 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    if (user != null) {
+                    mUser = firebaseAuth.getCurrentUser();
+                    if (mUser != null) {
 
                         // Name, email address, and profile photo Url
-                        mUsername = user.getDisplayName();
-                        mUserEmail = user.getEmail();
-                        mUserPhotoUri = user.getPhotoUrl();
+                        mUsername = mUser.getDisplayName();
+                        mUserEmail = mUser.getEmail();
+                        mUserPhotoUri = mUser.getPhotoUrl();
 
                         onSignedInInitializeNavSide();
-                        setDefaultViews();
-                        AttachFragmentToItem(new DashboardFragment());
+
 
 
                     } else {
@@ -183,28 +182,7 @@ public class MainActivity extends AppCompatActivity
     //TODO
 
 
-    private void onSignedInInitializeNavSide(){
 
-
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
-
-
-        mUserImageView = headerView.findViewById(R.id.userImageView);
-        mUserNameView = headerView.findViewById(R.id.userNameView);
-        mUserEmailView = headerView.findViewById(R.id.userEmailView);
-
-        mUserNameView.setText(mUsername);
-        mUserEmailView.setText(mUserEmail);
-
-        Glide
-                .with(this)     //TODO:FOR SINGLE ACTIVITY
-                .load(mUserPhotoUri) // the uri you got from Firebase
-                .centerCrop()
-                .into(mUserImageView); //Your imageView variable
-
-
-    }
 
 
     @Override
@@ -231,6 +209,7 @@ public class MainActivity extends AppCompatActivity
         if(requestCode ==RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Signing In", Toast.LENGTH_SHORT).show();
+                setDefaultViews();
 
 
             } else if (resultCode == RESULT_CANCELED) {
@@ -251,7 +230,7 @@ public class MainActivity extends AppCompatActivity
         // Handle bottom_navigation view item clicks here.
         int id = item.getItemId();
         int bottomSelectedItemIndex;
-        Fragment selectedFragment=new DashboardFragment();
+        Fragment selectedFragment=null;
         BottomNavigationView bottomNavigationView =findViewById(R.id.bottom_navigation);
 
 
@@ -266,7 +245,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_news) {
             bottomNavigationView.getMenu().getItem(2).setChecked(true);
-            selectedFragment = new NewsFragment();
+            selectedFragment = NewsFragment.newInstance(mUser);
 
 
         } else if (id == R.id.nav_performance) {
@@ -336,7 +315,9 @@ public class MainActivity extends AppCompatActivity
 
                             break;
                         case R.id.nav_bottom_news:
-                            selectedFragment = new NewsFragment();
+                            NewsFragment newsFragment = NewsFragment.newInstance(mUser);
+                            selectedFragment = newsFragment;
+
                             navigationView.getMenu().getItem(1).setChecked(true);
 
                             break;
@@ -348,13 +329,44 @@ public class MainActivity extends AppCompatActivity
                 }
             };
 
+    private void onSignedInInitializeNavSide(){
+
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+
+
+        mUserImageView = headerView.findViewById(R.id.userImageView);
+        mUserNameView = headerView.findViewById(R.id.userNameView);
+        mUserEmailView = headerView.findViewById(R.id.userEmailView);
+
+        mUserNameView.setText(mUsername);
+        mUserEmailView.setText(mUserEmail);
+
+        Glide
+                .with(this)     //TODO:FOR SINGLE ACTIVITY
+                .load(mUserPhotoUri) // the uri you got from Firebase
+                .centerCrop()
+                .into(mUserImageView); //Your imageView variable
+
+
+    }
+
     private void setDefaultViews(){
+        int bottomSelectedItemIndex;
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().getItem(0).setChecked(true);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        for(bottomSelectedItemIndex=0;bottomSelectedItemIndex<=2;bottomSelectedItemIndex++)
+            bottomNavigationView.getMenu().getItem(bottomSelectedItemIndex).setCheckable(true);
+
         bottomNavigationView.getMenu().getItem(1).setChecked(true);
+
+        AttachFragmentToItem(new DashboardFragment());
+
     }
 
     private void AttachFragmentToItem(Fragment selectedFragment){

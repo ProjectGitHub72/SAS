@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="@dimen/activity_horizontal_margin"
+              android:layout_marginStart="@dimen/activity_horizontal_margin"
+              android:orientation="vertical"
+              android:paddingTop="4dp"
+              android:paddingLeft="4dp">
+
+    <TextView
+        android:id="@+id/dateDayTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="2018/8/8:Sunday"/>
+
+    <ImageView
+        android:id="@+id/photoImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:background="@drawable/listview_item_border" />
+
+    <TextView
+        android:id="@+id/newsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        tools:text="Message"
+        android:layout_gravity="end"
+        android:background="@drawable/listview_item_border" />
+
+    <TextView
+        android:id="@+id/senderNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="4dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        tools:text="Name"
+        android:background="@drawable/listview_item_border"
+        />
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_marginTop="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="12:15 AM"/>
+
+</LinearLayout>
