@@ -19,24 +19,23 @@ public class NewsMessageAdapter extends ArrayAdapter<NewsMessageInfoCollector> {
         super(context, resource, objects);
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.item_news_message, parent, false);
         }
 
-        ImageView photoImageView = (ImageView) convertView.findViewById(R.id.photoImageView);
-        TextView newsTextView = (TextView) convertView.findViewById(R.id.newsTextView);
-        TextView senderNameTextView = (TextView) convertView.findViewById(R.id.senderNameTextView);
+        ImageView photoImageView =  convertView.findViewById(R.id.photoImageView);
+        TextView newsTextView =  convertView.findViewById(R.id.newsTextView);
+        TextView senderNameTextView = convertView.findViewById(R.id.senderNameTextView);
         TextView dateDayTextView = convertView.findViewById(R.id.dateDayTextView);
         TextView timeTextView = convertView.findViewById(R.id.timeTextView);
+        TextView titleTextView = convertView.findViewById(R.id.titleTextView);
 
         NewsMessageInfoCollector newsMessage = getItem(position);
 
-        Date mDate = new Date(newsMessage.getdate());
-        String formattedDate = formatDate(mDate);
-        String formattedTime = formatTime(mDate);
-        String dayOfWeek = newsMessage.getday();
+
 
 
 
@@ -54,8 +53,9 @@ public class NewsMessageAdapter extends ArrayAdapter<NewsMessageInfoCollector> {
         }
 
         senderNameTextView.setText("Sent By : " + newsMessage.getSender());
-        dateDayTextView.setText(formattedDate + " : " + dayOfWeek);
-        timeTextView.setText(formattedTime);
+        dateDayTextView.setText(newsMessage.getdate() + " : " + newsMessage.getday());
+        timeTextView.setText(newsMessage.getTime());
+        titleTextView.setText(newsMessage.getTitle());
 
 
 
@@ -63,21 +63,7 @@ public class NewsMessageAdapter extends ArrayAdapter<NewsMessageInfoCollector> {
     }
 
 
-    /**
-     * Return the formatted date string (i.e. "Mar 3, 1984") from a Date object.
-     */
-    private String formatDate(Date dateObject) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("LLL dd, yyyy");
-        return dateFormat.format(dateObject);
-    }
 
-    /**
-     * Return the formatted date string (i.e. "4:30 PM") from a Date object.
-     */
-    private String formatTime(Date dateObject) {
-        SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
-        return timeFormat.format(dateObject);
-    }
 
 
 

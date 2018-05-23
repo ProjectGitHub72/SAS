@@ -12,6 +12,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,15 +40,15 @@ public class MainActivity extends AppCompatActivity
     private static String mUsername;
     private static String mUserEmail;
     private static Uri mUserPhotoUri;
+    private static Fragment selectedFragment;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private FirebaseUser mUser;
+    private static FirebaseUser mUser;
 
 
 
-
-    private TextView mEmptyStateTextView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private ImageView mUserImageView;
     private TextView mUserNameView;
     private TextView mUserEmailView;
@@ -75,11 +76,26 @@ public class MainActivity extends AppCompatActivity
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
+
+
+        mSwipeRefreshLayout = findViewById(R.id.refreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Toast.makeText(MainActivity.this, "Refreshing", Toast.LENGTH_SHORT).show();
+                updateUI();
+            }
+        });
+
+
+        selectedFragment =null;
         setDefaultViews();
 
 
 
         //TODO:DONE
+
+
 
         // Get a reference to the ConnectivityManager to check state of network connectivity
 
@@ -91,53 +107,16 @@ public class MainActivity extends AppCompatActivity
         // If there is a network connection, fetch data
         if (!(networkInfo != null && networkInfo.isConnected())) {
 
-            noInternet=true;
-            setContentView(R.layout.activity_main);
-            mEmptyStateTextView = findViewById(R.id.empty_view);
-            mEmptyStateTextView.setText("CONNECTION NOT AVAILABLE");
+            NetworkNotAvailable();
         }
         else {
 
 
-            noInternet = false;
-            mFirebaseAuth = FirebaseAuth.getInstance();
+            NetworkAvailable();
 
-            mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                    mUser = firebaseAuth.getCurrentUser();
-                    if (mUser != null) {
-
-                        // Name, email address, and profile photo Url
-                        mUsername = mUser.getDisplayName();
-                        mUserEmail = mUser.getEmail();
-                        mUserPhotoUri = mUser.getPhotoUrl();
-
-                        onSignedInInitializeNavSide();
-
-
-
-                    } else {
-                        //Signed out
-
-                        //    onSignedOutCleanup();
-
-                        startActivityForResult(
-                                AuthUI.getInstance()
-                                        .createSignInIntentBuilder()
-                                        .setIsSmartLockEnabled(false)
-                                        .setAvailableProviders(Arrays.asList(
-                                                new AuthUI.IdpConfig.EmailBuilder().build(),
-                                                new AuthUI.IdpConfig.GoogleBuilder().build()
-                                        ))
-                                        .build(),
-                                RC_SIGN_IN);
-                    }
-
-                }
-            };
         }
+
+
     }
 
 
@@ -169,9 +148,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.sign_out_menu) {
-            //TODO
-            AuthUI.getInstance().signOut(this);
+        if (id == R.id.refresh_menu) {
+
+            mSwipeRefreshLayout.setRefreshing(true);
+            Toast.makeText(this, "Refreshing", Toast.LENGTH_SHORT).show();
+            updateUI();
+
             return true;
         }
 
@@ -230,7 +212,7 @@ public class MainActivity extends AppCompatActivity
         // Handle bottom_navigation view item clicks here.
         int id = item.getItemId();
         int bottomSelectedItemIndex;
-        Fragment selectedFragment=null;
+         selectedFragment=null;
         BottomNavigationView bottomNavigationView =findViewById(R.id.bottom_navigation);
 
 
@@ -245,7 +227,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_news) {
             bottomNavigationView.getMenu().getItem(2).setChecked(true);
-            selectedFragment = NewsFragment.newInstance(mUser);
+            selectedFragment = new NewsFragment();
 
 
         } else if (id == R.id.nav_performance) {
@@ -280,7 +262,7 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
         AttachFragmentToItem(selectedFragment);
@@ -293,7 +275,7 @@ public class MainActivity extends AppCompatActivity
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    Fragment selectedFragment = null;
+                     selectedFragment = null;
                     int bottomSelectedItemIndex;
                     NavigationView navigationView =findViewById(R.id.nav_view);
                     BottomNavigationView bottomNavigationView =findViewById(R.id.bottom_navigation);
@@ -315,9 +297,7 @@ public class MainActivity extends AppCompatActivity
 
                             break;
                         case R.id.nav_bottom_news:
-                            NewsFragment newsFragment = NewsFragment.newInstance(mUser);
-                            selectedFragment = newsFragment;
-
+                            selectedFragment = new NewsFragment();
                             navigationView.getMenu().getItem(1).setChecked(true);
 
                             break;
@@ -374,6 +354,118 @@ public class MainActivity extends AppCompatActivity
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 selectedFragment).commit();
+
+    }
+
+    private void DisableBothNavigation(){
+        int SelectedItemIndex;
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
+        for (SelectedItemIndex = 0; SelectedItemIndex <= 6; SelectedItemIndex++)
+            navigationView.getMenu().getItem(SelectedItemIndex).setEnabled(false);
+
+
+        for (SelectedItemIndex = 0; SelectedItemIndex <= 2; SelectedItemIndex++)
+            bottomNavigationView.getMenu().getItem(SelectedItemIndex).setEnabled(false);
+
+    }
+
+    private void EnableBothNavigation(){
+        int SelectedItemIndex;
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
+        for (SelectedItemIndex = 0; SelectedItemIndex <= 6; SelectedItemIndex++)
+            navigationView.getMenu().getItem(SelectedItemIndex).setEnabled(true);
+
+
+        for (SelectedItemIndex = 0; SelectedItemIndex <= 2; SelectedItemIndex++)
+            bottomNavigationView.getMenu().getItem(SelectedItemIndex).setEnabled(true);
+
+    }
+
+
+    private void NetworkNotAvailable(){
+
+        noInternet=true;
+     Toast.makeText(this, "CONNECTION NOT AVAILABLE", Toast.LENGTH_SHORT).show();
+        DisableBothNavigation();
+
+    }
+
+
+    public void NetworkAvailable(){
+
+        EnableBothNavigation();
+        noInternet = false;
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+
+
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                mUser = firebaseAuth.getCurrentUser();
+                if (mUser != null) {
+
+                    // Name, email address, and profile photo Url
+                    mUsername = mUser.getDisplayName();
+                    mUserEmail = mUser.getEmail();
+                    mUserPhotoUri = mUser.getPhotoUrl();
+
+                    onSignedInInitializeNavSide();
+
+
+
+                } else {
+                    //Signed out
+
+
+                    startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setIsSmartLockEnabled(false)
+                                    .setAvailableProviders(Arrays.asList(
+                                            new AuthUI.IdpConfig.EmailBuilder().build(),
+                                            new AuthUI.IdpConfig.GoogleBuilder().build()
+                                    ))
+                                    .build(),
+                            RC_SIGN_IN);
+                }
+
+            }
+        };
+    }
+
+
+
+private void updateUI(){
+
+    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+    mSwipeRefreshLayout.setRefreshing(false);
+
+    if (!(networkInfo != null && networkInfo.isConnected())) {
+
+        NetworkNotAvailable();
+    }
+    else {
+
+
+        NetworkAvailable();
+
+    }
+}
+
+
+    public static FirebaseUser UserInstanceForFragment(){
+
+    return mUser;
 
     }
 

@@ -21,8 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".NewsAdderActivity"></activity>
     </application>
 
-</manifest>
-
-    <!--android:roundIcon="@mipmap/ic_launcher_round"-->
+</manifest> <!-- android:roundIcon="@mipmap/ic_launcher_round" -->

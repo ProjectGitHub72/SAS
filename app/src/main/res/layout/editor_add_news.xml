@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".NewsAdderActivity">
+
+    <ListView
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:id="@+id/newsListView2"
+        tools:listitem="@layout/item_news_message"/>
+
+    <FrameLayout
+        android:id="@+id/fragment_container2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_above="@id/bottom_navigation"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="16dp"
+           style="@style/CategoryStyle"
+            android:text="Select Title : "/>
+
+
+        <EditText
+            android:id="@+id/titleEditText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/titleTextView"
+            android:hint="Enter Title for Notice"
+            android:inputType="textCapWords"
+            style="@style/EditorFieldStyle"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/newsTextView"
+            android:layout_height="wrap_content"
+           android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="16dp"
+            style="@style/CategoryStyle"
+            android:text="Enter Notice :"/>
+
+
+        <EditText
+            android:id="@+id/newsEditText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/newsTextView"
+            android:hint="Enter Notice"
+            android:inputType="text"
+            style="@style/EditorFieldStyle"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/OrTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OR"
+        android:padding="8dp"
+        android:textSize="25dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/imageTextView"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="16dp"
+            style="@style/CategoryStyle"
+            android:text="Select an Image :"/>
+
+        <ImageButton
+        android:id="@+id/photoPickerButton"
+        android:layout_toRightOf="@id/imageTextView"
+          android:layout_marginLeft="15dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@android:drawable/ic_menu_gallery" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/imageUrlTView"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+           android:layout_alignParentLeft="true"
+            android:paddingTop="16dp"
+            style="@style/CategoryStyle"
+            android:text="ImageURL :"/>
+
+
+        <EditText
+            android:id="@+id/imageUrlEditText"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/imageUrlTView"
+            android:hint="Selected Image URL"
+            android:inputType="textUri"
+            style="@style/EditorFieldStyle"/>
+
+    </RelativeLayout>
+
+    <Button
+    android:id="@+id/sendButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+    android:layout_gravity="end"
+    android:enabled="false"
+    android:text="Send"/>
+
+</LinearLayout>

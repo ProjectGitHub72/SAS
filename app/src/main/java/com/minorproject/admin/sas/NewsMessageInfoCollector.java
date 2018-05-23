@@ -21,17 +21,25 @@ public class NewsMessageInfoCollector {
     private String sender;
     private String photoUrl;
     private String day;
-    private long date;
+    private String date;
+    private String time;
+    private String title;
 
     public NewsMessageInfoCollector() {
     }
 
-    public NewsMessageInfoCollector(String news, String name, String photoUrl,String day,Long date) {
+    public NewsMessageInfoCollector(String title,String news, String name, String photoUrl,String day,String date,String time) {
+        this.title = title;
         this.news = news;
         this.sender = name;
         this.photoUrl = photoUrl;
         this.day = day;
         this.date = date;
+        this.time = time;
+    }
+
+    public String getTitle(){
+        return title;
     }
 
     public String getNews() {
@@ -50,8 +58,12 @@ public class NewsMessageInfoCollector {
         return day;
     }
 
-    public long getdate(){
+    public String getdate(){
         return date;
+    }
+
+    public String getTime(){
+        return time;
     }
 
 }
