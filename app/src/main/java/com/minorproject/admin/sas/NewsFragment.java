@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 
 import com.google.firebase.auth.FirebaseUser;
@@ -50,7 +51,8 @@ public class NewsFragment extends Fragment {
     private ChildEventListener mChildEventListener;
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mNewsPhotoStorageReference;
-    private static FirebaseUser mUser;
+    private FirebaseUser mUser;
+
 
     private boolean isAdmin = false;
 
@@ -69,15 +71,22 @@ public class NewsFragment extends Fragment {
 
 
         mUser = MainActivity.UserInstanceForFragment();
-        mSenderName = mUser.getDisplayName();
 
-        if(mUser.getEmail().contentEquals(ADMIN_EMAIL))
-        isAdmin = true;
+        if(mUser==null){
+            Intent intent = new Intent(getContext(),MainActivity.class);
+            startActivity(intent);
+            Toast.makeText(getContext(), "Info not Available.Try again.", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            mSenderName = mUser.getDisplayName();
 
-        else
-            isAdmin = false;
+            if (mUser.getEmail().contentEquals(ADMIN_EMAIL))
+                isAdmin = true;
 
+            else
+                isAdmin = false;
 
+        }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
 

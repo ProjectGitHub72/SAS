@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        selectedFragment =null;
+        selectedFragment =new DashboardFragment();
         setDefaultViews();
 
 
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity
 
         bottomNavigationView.getMenu().getItem(1).setChecked(true);
 
-        AttachFragmentToItem(new DashboardFragment());
+        AttachFragmentToItem(selectedFragment);
 
     }
 
