@@ -1,7 +1,6 @@
 package com.minorproject.admin.sas;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -26,9 +25,16 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,6 +43,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final int RC_SIGN_IN = 1;
     private static boolean noInternet =true;
+
+    private static FirebaseUser mUser;
     private static String mUsername;
     private static String mUserEmail;
     private static Uri mUserPhotoUri;
@@ -44,8 +52,11 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private static FirebaseUser mUser;
+    private FirebaseDatabase mFirebaseDatabaseAu;
+    private DatabaseReference mAuthorizeDatabaseReferenceAu;
+    private DatabaseReference mAdminDbReference;
 
+    private List<String> mAdminList = new ArrayList<>();
 
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -60,6 +71,24 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
 
+        loadViewsAndData();
+
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (!(networkInfo != null && networkInfo.isConnected())) {
+            NetworkNotAvailable();
+        }
+        else {
+            NetworkAvailable();
+        }
+
+    }
+
+
+    private void loadViewsAndData(){
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -76,6 +105,11 @@ public class MainActivity extends AppCompatActivity
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
+        mFirebaseDatabaseAu = FirebaseDatabase.getInstance();
+
+        mAuthorizeDatabaseReferenceAu = mFirebaseDatabaseAu.getReference().child("Authorize").child("userIDs");
+
+        mAdminDbReference = mFirebaseDatabaseAu.getReference().child("Permissions").child("Admin");
 
 
         mSwipeRefreshLayout = findViewById(R.id.refreshLayout);
@@ -90,37 +124,7 @@ public class MainActivity extends AppCompatActivity
 
         selectedFragment =new DashboardFragment();
         setDefaultViews();
-
-
-
-        //TODO:DONE
-
-
-
-        // Get a reference to the ConnectivityManager to check state of network connectivity
-
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        // Get details on the currently active default data network
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        // If there is a network connection, fetch data
-        if (!(networkInfo != null && networkInfo.isConnected())) {
-
-            NetworkNotAvailable();
-        }
-        else {
-
-
-            NetworkAvailable();
-
-        }
-
-
     }
-
-
-
 
 
     @Override
@@ -157,13 +161,9 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+
         return super.onOptionsItemSelected(item);
     }
-
-
-    //TODO
-
-
 
 
 
@@ -184,24 +184,25 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode ==RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Signing In", Toast.LENGTH_SHORT).show();
-                setDefaultViews();
-
-
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "App Exit", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }
-
-
-    }
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(requestCode ==RC_SIGN_IN) {
+//            if (resultCode == RESULT_OK && data != null) {
+//
+//                Toast.makeText(this, "Signing In", Toast.LENGTH_SHORT).show();
+//                setDefaultViews();
+//
+//
+//            } else if (resultCode == RESULT_CANCELED ) {
+//                Toast.makeText(this, "App Exit", Toast.LENGTH_SHORT).show();
+//                finish();
+//            }
+//        }
+//
+//
+//    }
 
 
 
@@ -258,6 +259,7 @@ public class MainActivity extends AppCompatActivity
 
             } else if (id == R.id.nav_logout) {
 
+                AttachFragmentToItem(new DashboardFragment());
                 AuthUI.getInstance().signOut(this);
                 return true;
             }
@@ -312,6 +314,11 @@ public class MainActivity extends AppCompatActivity
     private void onSignedInInitializeNavSide(){
 
 
+        TextView mWelcome = findViewById(R.id.dashWelcomeView2);
+       if(mWelcome!=null)
+        mWelcome.setText(mUsername);
+
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
 
@@ -324,7 +331,7 @@ public class MainActivity extends AppCompatActivity
         mUserEmailView.setText(mUserEmail);
 
         Glide
-                .with(this)     //TODO:FOR SINGLE ACTIVITY
+                .with(this)
                 .load(mUserPhotoUri) // the uri you got from Firebase
                 .centerCrop()
                 .into(mUserImageView); //Your imageView variable
@@ -363,7 +370,7 @@ public class MainActivity extends AppCompatActivity
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        for (SelectedItemIndex = 0; SelectedItemIndex <= 6; SelectedItemIndex++)
+        for (SelectedItemIndex = 0; SelectedItemIndex <= 4; SelectedItemIndex++)
             navigationView.getMenu().getItem(SelectedItemIndex).setEnabled(false);
 
 
@@ -378,7 +385,7 @@ public class MainActivity extends AppCompatActivity
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        for (SelectedItemIndex = 0; SelectedItemIndex <= 6; SelectedItemIndex++)
+        for (SelectedItemIndex = 0; SelectedItemIndex <= 4; SelectedItemIndex++)
             navigationView.getMenu().getItem(SelectedItemIndex).setEnabled(true);
 
 
@@ -403,7 +410,7 @@ public class MainActivity extends AppCompatActivity
         noInternet = false;
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-
+        databaseWork();
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -418,14 +425,17 @@ public class MainActivity extends AppCompatActivity
                     mUserPhotoUri = mUser.getPhotoUrl();
 
                     onSignedInInitializeNavSide();
+                    databaseWork();
 
+                    AuthorizeInfoCollector authorizeInfo = new AuthorizeInfoCollector(mUsername,mUserEmail,mUser.getUid());
+                    mAuthorizeDatabaseReferenceAu.child("BCT_2072").child(mUser.getUid()).setValue(authorizeInfo);
 
 
                 } else {
                     //Signed out
 
 
-                    startActivityForResult(
+                    startActivity(
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false)
@@ -433,12 +443,13 @@ public class MainActivity extends AppCompatActivity
                                             new AuthUI.IdpConfig.EmailBuilder().build(),
                                             new AuthUI.IdpConfig.GoogleBuilder().build()
                                     ))
-                                    .build(),
-                            RC_SIGN_IN);
+                                    .build());
                 }
 
             }
         };
+
+
     }
 
 
@@ -468,6 +479,48 @@ private void updateUI(){
     return mUser;
 
     }
+
+
+    private void databaseWork(){
+
+
+
+        mAdminDbReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Iterable<DataSnapshot> adminChildren = dataSnapshot.getChildren();
+                for(DataSnapshot adminLocalList : adminChildren){
+
+                    mAdminList.add(String.valueOf(adminLocalList.getValue()));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+                Toast.makeText(MainActivity.this,"Admin"+ databaseError.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
+if(mAdminList!=null) {
+    for (int index = 0; index < mAdminList.size(); index++) {
+        if (mAdminList.get(index).contentEquals(mUserEmail)) {
+
+            navigationView.getMenu().findItem(R.id.nav_authorize).setVisible(true);
+            break;
+
+        } else
+            navigationView.getMenu().findItem(R.id.nav_authorize).setVisible(false);
+
+    }
+}
+
+    }
+
 
 
 }

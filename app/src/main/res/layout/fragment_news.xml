@@ -39,37 +39,3 @@
         android:layout_centerVertical="true"/>
 </RelativeLayout>
 
-<!--<LinearLayout-->
-<!--android:id="@+id/news_add_linear_layout"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:layout_alignParentBottom="true"-->
-<!--android:layout_alignParentLeft="true"-->
-<!--android:layout_alignParentStart="true"-->
-<!--android:orientation="horizontal">-->
-
-<!--<ImageButton-->
-    <!--android:id="@+id/photoPickerButton"-->
-    <!--android:layout_width="36dp"-->
-    <!--android:layout_height="36dp"-->
-    <!--android:layout_gravity="bottom"-->
-    <!--android:layout_marginBottom="6dp"-->
-    <!--android:background="@android:drawable/ic_menu_gallery" />-->
-
-<!--<EditText-->
-    <!--android:id="@+id/newsEditText"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center_vertical"-->
-    <!--android:layout_weight="1"-->
-    <!--android:hint="Enter Notice to Send"/>-->
-
-<!--<Button-->
-    <!--android:id="@+id/sendButton"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="bottom"-->
-    <!--android:enabled="false"-->
-    <!--android:text="Send"/>-->
-
-<!--</LinearLayout>-->

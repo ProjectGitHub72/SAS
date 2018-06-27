@@ -36,27 +36,28 @@ public class NewsAdderActivity extends AppCompatActivity {
 
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 200;
     private static final int RC_PHOTO_PICKER =  2;
-    private static final int myRequestCode = 10;
+
     private NewsMessageAdapter mNewsAdapter;
     private ImageButton mPhotoPickerButton;
+
+    private ListView mNewsListView;
     private EditText mNewsEditText;
     private EditText mTitleEditText;
     private EditText mImageUrl;
     private Button mSendButton;
     private String mSenderName;
-    private boolean isTextReady=false;
-    private  boolean isImageReady=false;
-    private boolean isTitleReady=false;
     private String mImageURI;
     private String mDay;
     private String mTitle;
-    private static FirebaseUser mFbUser;
     String formattedDate;
     String formattedTime;
-    private ListView mNewsListView;
+
+    private boolean isTextReady=false;
+    private  boolean isImageReady=false;
+    private boolean isTitleReady=false;
 
 
-
+    private static FirebaseUser mFbUser;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mNewsDatabaseReference;
     private FirebaseStorage mFirebaseStorage;
@@ -206,10 +207,10 @@ public class NewsAdderActivity extends AppCompatActivity {
                 mImageUrl.setText("");
 
 
-                Intent intent = new Intent(NewsAdderActivity.this,MainActivity.class);
-                startActivity(intent);
-                Toast.makeText(NewsAdderActivity.this, "Notice Added Successfully !!!", Toast.LENGTH_SHORT).show();
-                finishActivity(myRequestCode);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new NewsFragment()).commit();
+
+
             }
         });
 
@@ -230,7 +231,7 @@ public class NewsAdderActivity extends AppCompatActivity {
 
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
-            StorageReference photoRef = mNewsPhotoStorageReference.child(selectedImageUri.getLastPathSegment());
+            final StorageReference photoRef = mNewsPhotoStorageReference.child(selectedImageUri.getLastPathSegment());
             photoRef.putFile(selectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -245,8 +246,7 @@ public class NewsAdderActivity extends AppCompatActivity {
                     getCurrentDay();
 
 
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    mImageURI = downloadUrl.toString();
+                   mImageURI = photoRef.getDownloadUrl().toString();
 
                     mImageUrl.setText(mImageURI);
                     isImageReady=true;
@@ -261,10 +261,6 @@ public class NewsAdderActivity extends AppCompatActivity {
             Toast.makeText(this, "Not an Image", Toast.LENGTH_SHORT).show();
             isImageReady=false;
         }
-
-        //TODO:Change database rules for notice node.
-
-
 
     }
 

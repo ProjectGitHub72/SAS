@@ -55,7 +55,7 @@ public class NewsMessageAdapter extends ArrayAdapter<NewsMessageInfoCollector> {
         senderNameTextView.setText("Sent By : " + newsMessage.getSender());
         dateDayTextView.setText(newsMessage.getdate() + " : " + newsMessage.getday());
         timeTextView.setText(newsMessage.getTime());
-        titleTextView.setText(newsMessage.getTitle());
+        titleTextView.setText("Title:"+newsMessage.getTitle());
 
 
 

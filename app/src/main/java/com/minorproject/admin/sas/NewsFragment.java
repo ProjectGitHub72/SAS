@@ -37,7 +37,6 @@ public class NewsFragment extends Fragment {
 
 
     private static final String ADMIN_EMAIL = "bhattadavid@gmail.com";
-    private static final int myRequestCode = 10;
     private String mSenderName;
 
 
@@ -51,9 +50,8 @@ public class NewsFragment extends Fragment {
     private ChildEventListener mChildEventListener;
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mNewsPhotoStorageReference;
+
     private FirebaseUser mUser;
-
-
     private boolean isAdmin = false;
 
 
@@ -95,8 +93,8 @@ public class NewsFragment extends Fragment {
 
 
         // Initialize references to views
-        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        mNewsListView = (ListView) rootView.findViewById(R.id.newsListView);
+        mProgressBar =  rootView.findViewById(R.id.progressBar);
+        mNewsListView =  rootView.findViewById(R.id.newsListView);
 
 
         // Initialize message ListView and its adapter
@@ -117,11 +115,9 @@ public class NewsFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), NewsAdderActivity.class);
                     intent.putExtra("UserValue",mSenderName);
-                    startActivityForResult(intent,myRequestCode);
+                    startActivity(intent);
                 }
             });
-
-
 
         }
         else
@@ -134,20 +130,6 @@ public class NewsFragment extends Fragment {
 
         return rootView;
 
-    }
-
-
-
-
-
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==myRequestCode)
-        attachDatabaseReadListener();
     }
 
 
