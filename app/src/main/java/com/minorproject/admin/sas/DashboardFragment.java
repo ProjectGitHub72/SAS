@@ -19,7 +19,6 @@ public class DashboardFragment extends Fragment {
 
 
     NavigationView navigationView;
-    BottomNavigationView bottomNav;
     private ImageButton mProfileButon;
     private ImageButton mNoticeButon;
     private ImageButton mPerformanceButon;
@@ -38,8 +37,6 @@ public class DashboardFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         navigationView = rootView.findViewById(R.id.nav_view);
-        bottomNav = rootView.findViewById(R.id.bottom_navigation);
-
 
         mProfileButon = rootView.findViewById(R.id.profileButton);
         mNoticeButon = rootView.findViewById(R.id.noticeButton);
@@ -71,6 +68,7 @@ public class DashboardFragment extends Fragment {
             }
         });
 
+        getActivity().setTitle("Dashboard");
         return rootView;
 
     }

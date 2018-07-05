@@ -57,11 +57,12 @@ public class NewsAdderActivity extends AppCompatActivity {
     private boolean isTitleReady=false;
 
 
-    private static FirebaseUser mFbUser;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mNewsDatabaseReference;
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mNewsPhotoStorageReference;
+
+    private static loginInfo_Collector mLoginResultObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,16 +72,22 @@ public class NewsAdderActivity extends AppCompatActivity {
 
         setTitle("Add a Notice");
 
-        mFbUser = MainActivity.UserInstanceForFragment();
         mTitle=null;
-
+        mLoginResultObject = loginActivity.login_result();
 
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
 
-        mNewsDatabaseReference = mFirebaseDatabase.getReference().child("News_Database");
-        mNewsPhotoStorageReference = mFirebaseStorage.getReference().child("news_photos");
+        mNewsDatabaseReference = mFirebaseDatabase.getReference()
+                .child(mLoginResultObject.getFaculty_symbol())
+                .child(mLoginResultObject.getYear())
+                .child("notice_node");
+
+        mNewsPhotoStorageReference = mFirebaseStorage.getReference()
+                .child(mLoginResultObject.getFaculty_symbol())
+                .child(mLoginResultObject.getYear())
+                .child("notice_node");
 
 
         mPhotoPickerButton =  findViewById(R.id.photoPickerButton);
@@ -199,7 +206,7 @@ public class NewsAdderActivity extends AppCompatActivity {
                      mNewsMessage = new NewsMessageInfoCollector(mTitle,null,mSenderName, mImageURI,mDay,formattedDate,formattedTime);
 
 
-                addToDatabse(mNewsMessage);
+                addToDatabase(mNewsMessage);
 
                 // Clear input box
                 mNewsEditText.setText("");
@@ -220,7 +227,7 @@ public class NewsAdderActivity extends AppCompatActivity {
 
     }
 
-    private void addToDatabse(NewsMessageInfoCollector newsMessage){
+    private void addToDatabase(NewsMessageInfoCollector newsMessage){
         mNewsDatabaseReference.push().setValue(newsMessage);
 
     }

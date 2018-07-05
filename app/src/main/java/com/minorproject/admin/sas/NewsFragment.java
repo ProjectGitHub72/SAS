@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -40,7 +40,6 @@ public class NewsFragment extends Fragment {
     private String mSenderName;
 
 
-
     private ListView mNewsListView;
     private NewsMessageAdapter mNewsAdapter;
     private ProgressBar mProgressBar;
@@ -48,10 +47,9 @@ public class NewsFragment extends Fragment {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mNewsDatabaseReference;
     private ChildEventListener mChildEventListener;
-    private FirebaseStorage mFirebaseStorage;
-    private StorageReference mNewsPhotoStorageReference;
 
-    private FirebaseUser mUser;
+
+    private static loginInfo_Collector mLoginResultObject;
     private boolean isAdmin = false;
 
 
@@ -68,33 +66,27 @@ public class NewsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_news, container, false);
 
 
-        mUser = MainActivity.UserInstanceForFragment();
-
-        if(mUser==null){
-            Intent intent = new Intent(getContext(),MainActivity.class);
-            startActivity(intent);
-            Toast.makeText(getContext(), "Info not Available.Try again.", Toast.LENGTH_SHORT).show();
+        if (!MainActivity.isPersistenceOn) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            MainActivity.isPersistenceOn = true;
         }
-        else {
-            mSenderName = mUser.getDisplayName();
 
-            if (mUser.getEmail().contentEquals(ADMIN_EMAIL))
-                isAdmin = true;
-
-            else
-                isAdmin = false;
-
-        }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseStorage = FirebaseStorage.getInstance();
 
-        mNewsDatabaseReference = mFirebaseDatabase.getReference().child("News_Database");
-        mNewsPhotoStorageReference = mFirebaseStorage.getReference().child("news_photos");
+        mNewsDatabaseReference = mFirebaseDatabase.getReference()
+                .child(mLoginResultObject.getFaculty_symbol())
+                .child(mLoginResultObject.getYear())
+                .child("notice_node");
+
+
+        checkPriority();
+
+        mSenderName = mLoginResultObject.getName();
 
 
         // Initialize references to views
-        mProgressBar =  rootView.findViewById(R.id.progressBar);
-        mNewsListView =  rootView.findViewById(R.id.newsListView);
+        mProgressBar = rootView.findViewById(R.id.progressBar);
+        mNewsListView = rootView.findViewById(R.id.newsListView);
 
 
         // Initialize message ListView and its adapter
@@ -103,8 +95,7 @@ public class NewsFragment extends Fragment {
         mNewsListView.setAdapter(mNewsAdapter);
 
 
-
-        if(isAdmin) {
+        if (isAdmin) {
 
             rootView.findViewById(R.id.fab).setVisibility(View.VISIBLE);
 
@@ -114,21 +105,30 @@ public class NewsFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), NewsAdderActivity.class);
-                    intent.putExtra("UserValue",mSenderName);
+                    intent.putExtra("UserValue", mSenderName);
                     startActivity(intent);
                 }
             });
 
-        }
-        else
-        {
+        } else {
             rootView.findViewById(R.id.fab).setVisibility(View.GONE);
         }
 
 
         attachDatabaseReadListener();
 
+        getActivity().setTitle("Notice");
         return rootView;
+
+    }
+
+    private void checkPriority() {
+
+        mLoginResultObject = loginActivity.login_result();
+        if (mLoginResultObject.getPriority_level() == 0) {
+            isAdmin = false;
+        } else
+            isAdmin = true;
 
     }
 
@@ -141,10 +141,10 @@ public class NewsFragment extends Fragment {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                     NewsMessageInfoCollector newsMessage = dataSnapshot.getValue(NewsMessageInfoCollector.class);
+                    NewsMessageInfoCollector newsMessage = dataSnapshot.getValue(NewsMessageInfoCollector.class);
                     mNewsAdapter.add(newsMessage);
-                    mNewsListView.smoothScrollToPosition(mNewsAdapter.getCount()-1);
-                    if(mNewsAdapter!=null)
+                    mNewsListView.smoothScrollToPosition(mNewsAdapter.getCount() - 1);
+                    if (mNewsAdapter != null)
                         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
 
                 }
@@ -172,8 +172,14 @@ public class NewsFragment extends Fragment {
 
             mNewsDatabaseReference.addChildEventListener(mChildEventListener);
         }
-  }
+    }
 
-
-
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if (mChildEventListener != null) {
+//            mNewsDatabaseReference.addChildEventListener(mChildEventListener);
+//
+//        }
+//    }
 }
