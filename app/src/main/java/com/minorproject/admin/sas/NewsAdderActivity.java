@@ -3,8 +3,10 @@ package com.minorproject.admin.sas;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -64,6 +66,9 @@ public class NewsAdderActivity extends AppCompatActivity {
 
     private static loginInfo_Collector mLoginResultObject;
 
+    private SharedPreferences mSharedPref;
+    private SharedPreferences.Editor mPrefEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -73,8 +78,10 @@ public class NewsAdderActivity extends AppCompatActivity {
         setTitle("Add a Notice");
 
         mTitle=null;
-        mLoginResultObject = loginActivity.login_result();
 
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefEditor = mSharedPref.edit();
+        obtainPreference();
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
@@ -377,6 +384,15 @@ public class NewsAdderActivity extends AppCompatActivity {
     }
 
 
-
+    private void obtainPreference() {
+        mLoginResultObject = new loginInfo_Collector(
+                mSharedPref.getString(getString(R.string.NAME), ""),
+                mSharedPref.getString(getString(R.string.ROLL), ""),
+                mSharedPref.getString(getString(R.string.FACULTY), ""),
+                mSharedPref.getString(getString(R.string.YEAR), ""),
+                mSharedPref.getString(getString(R.string.PHOTO_URL), ""),
+                mSharedPref.getInt(getString(R.string.PRIORITY), 0)
+        );
+    }
 
 }

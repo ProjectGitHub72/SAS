@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ProfileActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="2dp"
+            android:text="User Name"
+            style="@style/CategoryStyle"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/profileNameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:hint="KEC-ian"
+            style="@style/EditorFieldStyle"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="2dp"
+            android:text="User Email"
+            style="@style/CategoryStyle"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/profileEmailET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            style="@style/EditorFieldStyle"
+            android:hint="kec@kec.com"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="2dp"
+            android:text="Update Image : "
+            style="@style/CategoryStyle"
+            android:textColor="@android:color/black"/>
+
+            <ImageButton
+                android:id="@+id/profileImageButtonET"
+                android:padding="20dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@android:drawable/ic_menu_gallery" />
+
+
+
+
+        </LinearLayout>
+
+
+        <EditText
+            android:id="@+id/profileImageUriET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            style="@style/EditorFieldStyle"
+            android:hint="ImageUri"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="2dp"
+            android:text="Priority Key"
+            style="@style/CategoryStyle"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/profileStatusET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:hint="KEY"
+            style="@style/EditorFieldStyle"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="2dp"
+            android:text="Faculty"
+            style="@style/CategoryStyle"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/profileFacultyET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            style="@style/EditorFieldStyle"
+            android:hint="BCT"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="2dp"
+            android:text="Year"
+            style="@style/CategoryStyle"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/profileYearET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            style="@style/EditorFieldStyle"
+            android:inputType="number"
+            android:hint="2072"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="2dp"
+            android:text="Old Password"
+            style="@style/CategoryStyle"
+            android:textColor="@android:color/black"/>
+
+
+        <EditText
+            android:id="@+id/profilePasswordET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:hint="******"
+            style="@style/EditorFieldStyle"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="2dp"
+            android:text="New Password ( >5 )"
+            style="@style/CategoryStyle"
+            android:textColor="@android:color/black"/>
+
+
+        <EditText
+            android:id="@+id/profilePasswordNewET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:hint="******"
+            style="@style/EditorFieldStyle"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/update_profile_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="20dp"
+            android:enabled="false"
+            android:text="Update"/>
+
+
+    </LinearLayout>
+
+</ScrollView>

@@ -3,7 +3,9 @@ package com.minorproject.admin.sas;
 
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 
@@ -36,7 +38,6 @@ import java.util.List;
 public class NewsFragment extends Fragment {
 
 
-    private static final String ADMIN_EMAIL = "bhattadavid@gmail.com";
     private String mSenderName;
 
 
@@ -51,6 +52,8 @@ public class NewsFragment extends Fragment {
 
     private static loginInfo_Collector mLoginResultObject;
     private boolean isAdmin = false;
+
+    private SharedPreferences mSharedPref;
 
 
     public NewsFragment() {
@@ -72,6 +75,10 @@ public class NewsFragment extends Fragment {
         }
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        obtainPreference();
 
         mNewsDatabaseReference = mFirebaseDatabase.getReference()
                 .child(mLoginResultObject.getFaculty_symbol())
@@ -122,9 +129,20 @@ public class NewsFragment extends Fragment {
 
     }
 
+    private void obtainPreference() {
+        mLoginResultObject = new loginInfo_Collector(
+                mSharedPref.getString(getString(R.string.NAME), ""),
+                mSharedPref.getString(getString(R.string.ROLL), ""),
+                mSharedPref.getString(getString(R.string.FACULTY), ""),
+                mSharedPref.getString(getString(R.string.YEAR), ""),
+                mSharedPref.getString(getString(R.string.PHOTO_URL), ""),
+                mSharedPref.getInt(getString(R.string.PRIORITY), 0)
+        );
+    }
+
     private void checkPriority() {
 
-        mLoginResultObject = loginActivity.login_result();
+
         if (mLoginResultObject.getPriority_level() == 0) {
             isAdmin = false;
         } else
@@ -174,12 +192,7 @@ public class NewsFragment extends Fragment {
         }
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if (mChildEventListener != null) {
-//            mNewsDatabaseReference.addChildEventListener(mChildEventListener);
-//
-//        }
-//    }
+
+
 }
+

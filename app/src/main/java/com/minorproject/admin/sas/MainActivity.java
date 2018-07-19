@@ -2,10 +2,12 @@ package com.minorproject.admin.sas;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -15,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -57,10 +60,13 @@ public class MainActivity extends AppCompatActivity
     private FirebaseDatabase mFirebaseDatabse;
     private DatabaseReference mUSerListDbRef;
 
+    private SharedPreferences mSharedPref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
 
         if(!isPersistenceOn)
@@ -178,10 +184,13 @@ public class MainActivity extends AppCompatActivity
 
         newLoginLoad();
 
-        // Name, email address, and profile photo Url
-        mUsername = mUser.getDisplayName();
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        mUsername = mSharedPref.getString(getString(R.string.NAME),mUser.getDisplayName());
         mUserEmail = mUser.getEmail();
-        mUserPhotoUri = mUser.getPhotoUrl();
+        mUserPhotoUri = Uri.parse(mSharedPref.getString(getString(R.string.PHOTO_URL),""));
+
+
 
         ImageView mUserImageView;
         TextView mUserNameView;
@@ -189,6 +198,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
+        Menu menu = navigationView.getMenu();
+
+
+        if(mSharedPref.getInt(getString(R.string.PRIORITY),0)==0)
+            menu.findItem(R.id.nav_attendance).setVisible(false);
+        else
+            menu.findItem(R.id.nav_attendance).setVisible(true);
+
 
         mUserImageView = headerView.findViewById(R.id.userImageView);
         mUserNameView = headerView.findViewById(R.id.userNameView);
@@ -304,6 +321,8 @@ public class MainActivity extends AppCompatActivity
         if (!noInternet)
             mFirebaseAuth.addAuthStateListener(mAuthStateListener);
 
+
+
         if(mUser!=null)
             onSignedInInitializeNavSide(mUser);
 
@@ -384,12 +403,12 @@ public class MainActivity extends AppCompatActivity
 
         databaseLoad();
 
-        mProgressBar.setVisibility(View.INVISIBLE);
-        if(newLogin){
-            newLogin = false;
-            Intent intent = new Intent(this,loginActivity.class);
-            startActivity(intent);
-        }
+//        mProgressBar.setVisibility(View.INVISIBLE);
+//        if(newLogin){
+//            newLogin = false;
+//            Intent intent = new Intent(this,loginActivity.class);
+//            startActivity(intent);
+//        }
 
     }
 
@@ -419,6 +438,14 @@ public class MainActivity extends AppCompatActivity
                 }
                 else
                     newLogin = false;
+
+
+                mProgressBar.setVisibility(View.INVISIBLE);
+                if(newLogin){
+                    newLogin = false;
+                    Intent intent = new Intent(MainActivity.this,loginActivity.class);
+                    startActivity(intent);
+                }
 
             }
 

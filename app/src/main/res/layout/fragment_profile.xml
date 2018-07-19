@@ -1,14 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ProfileFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+<LinearLayout
+     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+    <ImageView
+        android:id="@+id/profileImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@mipmap/ic_launcher_round"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@+id/profileNameView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/profileImageView"
+        android:layout_alignTop="@id/profileImageView"
+        android:layout_alignRight="@id/profileImageView"
+        android:layout_alignBottom="@id/profileImageView"
+        android:layout_margin="1dp"
+        android:gravity="bottom"
+        android:text="Hello"
+        android:textColor="#FFFFFF"
+        android:paddingLeft="30dp"
+        android:paddingBottom="20dp"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/profileFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="171dp"
+        android:clickable="true"
+        android:src="@android:drawable/ic_menu_edit" />
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="2dp"
+        android:text="User Name"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/profileNameView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="KEC-ian"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="2dp"
+        android:text="User Email"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/profileEmailView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="kec@kec.com"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="2dp"
+        android:text="User Status"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/profileStatusView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="Student"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="2dp"
+        android:text="Roll No"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/profileRollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="720xx"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="2dp"
+        android:text="Faculty"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/profileFacultyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="BCT"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="2dp"
+        android:text="Year"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/profileYearView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="2072"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="2dp"
+        android:text="User ID"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/profileUidView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:text="*123456"/>
+
+
+
+</LinearLayout>
+
+</ScrollView>

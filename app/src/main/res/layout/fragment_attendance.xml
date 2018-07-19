@@ -1,14 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".AttendanceFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/year_attendance_view"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="16dp"
+            style="@style/CategoryStyle"
+            android:text="Batch Year :"/>
+
+
+        <EditText
+            android:id="@+id/year_attendance_editText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/year_attendance_view"
+            android:hint="2072"
+            android:inputType="numberDecimal"
+            style="@style/EditorFieldStyle"/>
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/faculty_attend_view"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="16dp"
+            style="@style/CategoryStyle"
+            android:text="Faculty symbol :"/>
+
+
+        <EditText
+            android:id="@+id/faculty_attend_editText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/faculty_attend_view"
+            android:hint="BCT"
+            android:inputType="textCapCharacters"
+            style="@style/EditorFieldStyle"/>
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/subject_attend_view"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="16dp"
+            style="@style/CategoryStyle"
+            android:text="Subject Code:"/>
+
+
+        <EditText
+            android:id="@+id/subject_attend_editText"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/subject_attend_view"
+            android:hint="CT501"
+            android:inputType="textCapCharacters"
+            style="@style/EditorFieldStyle"/>
+
+    </RelativeLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/roll_attend_view"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="16dp"
+            style="@style/CategoryStyle"
+            android:text="Roll Call :"/>
+
+
+        <EditText
+            android:id="@+id/roll_attend_editText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="15dp"
+            android:hint="720xx"
+            android:inputType="numberDecimal"
+            style="@style/EditorFieldStyle"/>
+
+
+        <TextView
+            android:id="@+id/roll_rangeTo_view"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="16dp"
+            style="@style/CategoryStyle"
+            android:text="TO"/>
+
+
+        <EditText
+            android:id="@+id/roll2_attend_editText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:hint="720xx"
+            android:inputType="numberDecimal"
+            style="@style/EditorFieldStyle"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/begin_attend_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="40dp"
+        android:enabled="false"
+        android:text="Start"/>
+
+
+
+
+</LinearLayout>

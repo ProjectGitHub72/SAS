@@ -1,8 +1,10 @@
 package com.minorproject.admin.sas;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -15,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,7 +41,7 @@ public class loginActivity extends AppCompatActivity{
     private TextView mSelectedImageUrl_textView;
 
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mUserListref;
+    private DatabaseReference mUserListRef;
     private DatabaseReference mUserInfoDbRef;
 
     private FirebaseStorage mStorage;
@@ -59,13 +60,16 @@ public class loginActivity extends AppCompatActivity{
     private static final int RC_PHOTO_PICKER =  2;
 
     private boolean isImageReady = false;
+    private boolean imageUriloaded = false;
 
 
-    private final String teacherKey = "";
-    private final String adminKey = "";
+    private  String teacherKey = "";
+    private  String adminKey = "";
 
     private FirebaseUser mUser;
-    private static loginInfo_Collector mResultObject;
+
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mPrefEditor;
 
 
     @Override
@@ -83,6 +87,10 @@ public class loginActivity extends AppCompatActivity{
         mJoinYearEditText = findViewById(R.id.join_year_editText);
         mSelectedImageUrl_textView = findViewById(R.id.imageUrl_login_textMain);
         mImagePickerButton = findViewById(R.id.imageButton_login);
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefEditor = mSharedPreferences.edit();
+
 
 
         mSubmitButton.setEnabled(false);
@@ -103,6 +111,14 @@ public class loginActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
 
+
+                if(permission_key.contentEquals(teacherKey))
+                    priority_level = 1;
+                else if(permission_key.contentEquals(adminKey))
+                    priority_level = 2;
+                else
+                    priority_level = 0;
+
                     loginInfo_Collector mNewLoginResult;
 
                     mNewLoginResult = new loginInfo_Collector(
@@ -111,7 +127,6 @@ public class loginActivity extends AppCompatActivity{
 
 
                     addToDatabase(mNewLoginResult);
-                    mResultObject = mNewLoginResult;
 
                 // Clear input box
                 mNameEditText.setText("");
@@ -126,7 +141,6 @@ public class loginActivity extends AppCompatActivity{
                 Toast.makeText(loginActivity.this, "Profile Complete", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(loginActivity.this,MainActivity.class);
                     startActivity(intent);
-//                sendIntent(newLogin);
 
             }
         });
@@ -150,18 +164,13 @@ public class loginActivity extends AppCompatActivity{
 
     }
 
-//    private void sendIntent(loginInfo_Collector login) {
-//
-//        Intent resultIntent = new Intent();
-//        resultIntent.putExtra("LOGIN_OBJECT",login);
-//        setResult(RESULT_OK,resultIntent);
-//        finish();
-//    }
 
     private void addToDatabase(loginInfo_Collector newLogin) {
 
         mUserInfoDbRef.child(mUser.getUid()).setValue(newLogin);
-            mUserListref.child(mUser.getUid()).setValue(name);
+            mUserListRef.child(mUser.getUid()).setValue(name);
+
+            preferenceHandler();
 
 
     }
@@ -198,6 +207,9 @@ public class loginActivity extends AppCompatActivity{
                         loadDataFromView();
             }
 
+            else
+                mSubmitButton.setEnabled(false);
+
         }
     };
 
@@ -210,15 +222,7 @@ public class loginActivity extends AppCompatActivity{
         faculty_symbol = mFacultyEditText.getText().toString().trim().toUpperCase();
         permission_key = mPermissionKeyEditText.getText().toString().trim();
         year = mJoinYearEditText.getText().toString().trim();
-
-
-        if(permission_key.contentEquals(teacherKey))
-            priority_level = 1;
-        else if(permission_key.contentEquals(adminKey))
-            priority_level = 2;
-        else
-            priority_level = 0;
-
+//TODo: each node => 2 key for each faculty
 
         loadDatabase();
 
@@ -231,15 +235,35 @@ public class loginActivity extends AppCompatActivity{
     private void loadDatabase() {
 
 
+
         mDatabase = FirebaseDatabase.getInstance();
-        mUserListref = mDatabase.getReference().child("UserList");
+
+        mDatabase.getReference().child("Priority_Key").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot key : dataSnapshot.getChildren() ){
+                    if(key.getKey().contentEquals("ADMIN"))
+                        adminKey = key.getValue().toString();
+                    if(key.getKey().contentEquals("TEACHER"))
+                        teacherKey = key.getValue().toString();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mUserListRef = mDatabase.getReference().child("UserList");
         mUserInfoDbRef = mDatabase.getReference().child(faculty_symbol).child(year).child("users");
 
-        mStorage = FirebaseStorage.getInstance();
-        mUserPicStorageRef = mStorage.getReference().child(faculty_symbol).child(year).child("user_pics");
+        if(!imageUriloaded) {
+            mStorage = FirebaseStorage.getInstance();
+            mUserPicStorageRef = mStorage.getReference().child(faculty_symbol).child(year).child("user_pics");
 
-        loadStorageData();
-
+            loadStorageData();
+        }
     }
 
     private void loadStorageData() {
@@ -254,8 +278,8 @@ public class loginActivity extends AppCompatActivity{
                 mSelectedImageUrl_textView.setText(photo_url);
 
                 isImageReady = true;
+                imageUriloaded = true;
 
-                editTextListeners();
 
 
             }
@@ -279,7 +303,6 @@ public class loginActivity extends AppCompatActivity{
 
         }
 
-        editTextListeners();
 
     }
 
@@ -289,13 +312,6 @@ public class loginActivity extends AppCompatActivity{
 
         }
         
-        
-        
-        
-        public static loginInfo_Collector login_result(){
-                        
-                return mResultObject;
-        }
 
 
 
@@ -303,10 +319,10 @@ public class loginActivity extends AppCompatActivity{
         Toast.makeText(this, "Checking Data", Toast.LENGTH_SHORT).show();
 
         mDatabase = FirebaseDatabase.getInstance();
-        mUserListref = mDatabase.getReference().child("UserList");
+        mUserListRef = mDatabase.getReference().child("UserList");
 
 
-        mUserListref.addValueEventListener(new ValueEventListener() {
+        mUserListRef.addValueEventListener(new ValueEventListener() {
             @Override
 
 
@@ -335,6 +351,31 @@ public class loginActivity extends AppCompatActivity{
 
             }
         });
+
+
+    }
+
+    private void preferenceHandler(){
+
+        mPrefEditor.putString(getString(R.string.NAME),name);
+        mPrefEditor.commit();
+
+        mPrefEditor.putString(getString(R.string.FACULTY),faculty_symbol);
+        mPrefEditor.commit();
+
+        mPrefEditor.putString(getString(R.string.ROLL),roll_no);
+        mPrefEditor.commit();
+
+        mPrefEditor.putString(getString(R.string.YEAR),year);
+        mPrefEditor.commit();
+
+        mPrefEditor.putString(getString(R.string.PHOTO_URL),photo_url);
+        mPrefEditor.commit();
+
+        mPrefEditor.putInt(getString(R.string.PRIORITY),priority_level);
+        mPrefEditor.commit();
+
+
 
 
     }
