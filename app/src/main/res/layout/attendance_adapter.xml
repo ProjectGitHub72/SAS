@@ -2,14 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    android:background="@android:color/holo_green_light">
+    android:background="#6543">
 
     <TextView
         android:id="@+id/faculty_permA_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Faculty"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
         android:layout_alignParentRight="true"/>
 
     <TextView
@@ -18,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/faculty_permA_view"
         android:layout_marginTop="2dp"
+        android:paddingRight="10dp"
         android:text="Subject"
         android:layout_alignParentRight="true"/>
 
@@ -27,13 +29,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/subject_permA_view"
         android:layout_marginTop="2dp"
+        android:paddingRight="10dp"
         android:text="Teacher"
         android:layout_alignParentRight="true"/>
 
 
     <TextView
         android:id="@+id/attend_name"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -43,8 +46,7 @@
 
     <TextView
         android:id="@+id/attend_roll"
-        android:layout_marginTop="10dp"
-
+        android:layout_marginTop="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/attend_name"
@@ -54,11 +56,29 @@
 
     <ImageView
         android:id="@+id/student_image_attend"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:scaleType="centerCrop"
         android:src="@mipmap/ic_launcher_round"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Swipe up : PRESENT"
+        android:textStyle="italic"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Swipe down : ABSENT"
+        android:textStyle="italic"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="4dp"
+        android:gravity="bottom"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

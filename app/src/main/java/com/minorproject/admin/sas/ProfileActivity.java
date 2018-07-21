@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -93,16 +94,39 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void loadPreference(){
 
+        if(mSharedPref.getInt(getString(R.string.PRIORITY),0)==0){
+            mYearET.setVisibility(View.GONE);
+            mFacultyET.setVisibility(View.GONE);
+
+            findViewById(R.id.facultyTVProfile).setVisibility(View.GONE);
+            findViewById(R.id.yearTVProfile).setVisibility(View.GONE);
+        }
+        else{
+            mYearET.setVisibility(View.VISIBLE);
+            mFacultyET.setVisibility(View.VISIBLE);
+            findViewById(R.id.facultyTVProfile).setVisibility(View.VISIBLE);
+            findViewById(R.id.yearTVProfile).setVisibility(View.VISIBLE);
+            mFacultyET.setText(mSharedPref.getString(getString(R.string.FACULTY),""));
+            mYearET.setText(mSharedPref.getString(getString(R.string.YEAR),""));
+        }
+
         mNameET.setText(mSharedPref.getString(getString(R.string.NAME),MainActivity.UserInstanceForFragment().getDisplayName()));
         mEmailET.setText(MainActivity.UserInstanceForFragment().getEmail());
         mImageUriET.setText(mSharedPref.getString(getString(R.string.PHOTO_URL),""));
         mPriorityKeyET.setText("0");
-        mFacultyET.setText(mSharedPref.getString(getString(R.string.FACULTY),""));
-        mYearET.setText(mSharedPref.getString(getString(R.string.YEAR),""));
+
 
     }
 
     private void setPreference(){
+
+        if(mSharedPref.getInt(getString(R.string.PRIORITY),0)!=0){
+            mPrefEditor.putString(getString(R.string.FACULTY),mFacultyET.getText().toString().trim());
+            mPrefEditor.commit();
+
+            mPrefEditor.putString(getString(R.string.YEAR),mYearET.getText().toString().trim());
+            mPrefEditor.commit();
+        }
 
         mPrefEditor.putString(getString(R.string.NAME),mNameET.getText().toString());
         mPrefEditor.commit();
@@ -113,11 +137,7 @@ public class ProfileActivity extends AppCompatActivity {
         mPrefEditor.putInt(getString(R.string.PRIORITY),priority_level);
         mPrefEditor.commit();
 
-        mPrefEditor.putString(getString(R.string.FACULTY),mFacultyET.getText().toString().trim());
-        mPrefEditor.commit();
 
-        mPrefEditor.putString(getString(R.string.YEAR),mYearET.getText().toString().trim());
-        mPrefEditor.commit();
 
     }
 
@@ -174,15 +194,26 @@ public class ProfileActivity extends AppCompatActivity {
 
                 loginInfo_Collector mNewLoginResult;
 
-                mNewLoginResult = new loginInfo_Collector(
-                        mNameET.getText().toString(),
-                        mSharedPref.getString(getString(R.string.ROLL),"0"),
-                        mFacultyET.getText().toString().trim().toUpperCase(),
-                        mYearET.getText().toString().trim(),
-                        mImageUriET.getText().toString(),
-                        priority_level
-                );
-
+                if(mSharedPref.getInt(getString(R.string.PRIORITY),0)!=0) {
+                    mNewLoginResult = new loginInfo_Collector(
+                            mNameET.getText().toString(),
+                            mSharedPref.getString(getString(R.string.ROLL), "0"),
+                            mFacultyET.getText().toString().trim().toUpperCase(),
+                            mYearET.getText().toString().trim(),
+                            mImageUriET.getText().toString(),
+                            priority_level
+                    );
+                }
+                else{
+                    mNewLoginResult = new loginInfo_Collector(
+                            mNameET.getText().toString(),
+                            mSharedPref.getString(getString(R.string.ROLL), "0"),
+                            mSharedPref.getString(getString(R.string.FACULTY),""),
+                            mSharedPref.getString(getString(R.string.YEAR),""),
+                            mImageUriET.getText().toString(),
+                            priority_level
+                    );
+                }
                 updateEmails();
 
                 mDbReference.setValue(mNewLoginResult);
@@ -196,13 +227,16 @@ public class ProfileActivity extends AppCompatActivity {
                 mNewPasswordET.setText("");
                 mPriorityKeyET.setText("");
                 mImageUriET.setText("");
-                mFacultyET.setText("");
-                mYearET.setText("");
+                if(mYearET.isEnabled()) {
+                    mFacultyET.setText("");
+                    mYearET.setText("");
+                }
 
 
                 mUpdateButton.setEnabled(false);
                 Toast.makeText(ProfileActivity.this, "Update Complete", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ProfileActivity.this,MainActivity.class);
+                Intent intent =  new Intent(ProfileActivity.this,MainActivity.class);
+                intent.putExtra("FRAGMENT","PROFILE");
                 startActivity(intent);
 
             }
@@ -236,8 +270,10 @@ public class ProfileActivity extends AppCompatActivity {
         mPriorityKeyET.addTextChangedListener(watcher);
         mOldPasswordET.addTextChangedListener(watcher);
         mNewPasswordET.addTextChangedListener(watcher);
-        mFacultyET.addTextChangedListener(watcher);
-        mYearET.addTextChangedListener(watcher);
+        if(mYearET.isEnabled()) {
+            mFacultyET.addTextChangedListener(watcher);
+            mYearET.addTextChangedListener(watcher);
+        }
     }
 
 
@@ -251,23 +287,41 @@ public class ProfileActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
 
-            if(
-                    mNameET.getText().toString().length() >0 &&
-                            mEmailET.getText().toString().length() > 0 &&
-                            mImageUriET.getText().toString().length() >0 &&
-                            mPriorityKeyET.getText().toString().length() > 0 &&
-                            mNewPasswordET.getText().toString().length() >5 &&
-                            mOldPasswordET.getText().toString().length()>0 &&
-                            mFacultyET.getText().toString().length() >0 &&
-                            mYearET.getText().toString().length()>0
-                    )            {
+            if (mSharedPref.getInt(getString(R.string.PRIORITY),0)!=0) {
+                if (
+                        mNameET.getText().toString().length() > 0 &&
+                                mEmailET.getText().toString().length() > 0 &&
+                                mImageUriET.getText().toString().length() > 0 &&
+                                mPriorityKeyET.getText().toString().length() > 0 &&
+                                mNewPasswordET.getText().toString().length() > 5 &&
+                                mOldPasswordET.getText().toString().length() > 0 &&
+                                mFacultyET.getText().toString().length() > 0 &&
+                                mYearET.getText().toString().length() > 0
+                        ) {
 
-                mUpdateButton.setEnabled(true);
+                    mUpdateButton.setEnabled(true);
+
+                } else
+                    mUpdateButton.setEnabled(false);
 
             }
 
-            else
-                mUpdateButton.setEnabled(false);
+                else  {
+                if (
+                        mNameET.getText().toString().length() > 0 &&
+                                mEmailET.getText().toString().length() > 0 &&
+                                mImageUriET.getText().toString().length() > 0 &&
+                                mPriorityKeyET.getText().toString().length() > 0 &&
+                                mNewPasswordET.getText().toString().length() > 5 &&
+                                mOldPasswordET.getText().toString().length() > 0
+                        ) {
+
+                    mUpdateButton.setEnabled(true);
+
+                } else
+                    mUpdateButton.setEnabled(false);
+
+            }
 
         }
     };
@@ -281,16 +335,32 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             final StorageReference photoRef = mStorageRef.child(MainActivity.UserInstanceForFragment().getUid());
-            photoRef.putFile(data.getData()).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            UploadTask uploadTask = photoRef.putFile(data.getData());
+
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
 
+                    // Continue with the task to get the download URL
+                    return photoRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
 
-                    mImageUriET.setText(photoRef.getDownloadUrl().toString());
+                        mImageUriET.setText(task.getResult().toString());
 
-
+                    }
                 }
             });
+
+
+
+
         }
         else if(requestCode==RC_PHOTO_PICKER && resultCode == RESULT_CANCELED){
             Toast.makeText(this, "Not an Image", Toast.LENGTH_SHORT).show();
@@ -366,3 +436,29 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+//            final StorageReference photoRef = mStorageRef.child(MainActivity.UserInstanceForFragment().getUid());
+//            photoRef.putFile(data.getData()).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//
+//                    mImageUriET.setText(photoRef.getDownloadUrl().toString());
+//
+//
+//                }
+//            });
+//        }
+//        else if(requestCode==RC_PHOTO_PICKER && resultCode == RESULT_CANCELED){
+//            Toast.makeText(this, "Not an Image", Toast.LENGTH_SHORT).show();
+//
+//
+//        }
+//
+//        editTextListeners();
+//
+//    }

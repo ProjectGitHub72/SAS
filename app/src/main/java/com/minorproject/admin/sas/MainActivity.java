@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,7 +83,10 @@ public class MainActivity extends AppCompatActivity
 
 
         loadViewsAndData();
+
+        if(!isIntentFromFragment())
         setDefaultViews();
+
         checkNetworkConnection();
 
 
@@ -215,7 +219,7 @@ public class MainActivity extends AppCompatActivity
         mUserEmailView.setText(mUserEmail);
 
         Glide
-                .with(MainActivity.this)
+                .with(this)
                 .load(mUserPhotoUri) // the uri you got from Firebase
                 .centerCrop()
                 .into(mUserImageView); //Your imageView variable
@@ -455,6 +459,32 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
+    }
+
+    private boolean isIntentFromFragment(){
+
+        if(getIntent()!=null && getIntent().getStringExtra("FRAGMENT")!=null) {
+            Intent intent = getIntent();
+            String fromIntent = intent.getStringExtra("FRAGMENT");
+
+            switch (fromIntent){
+
+                case "NOTICE" :     AttachFragmentToItem(new NewsFragment());
+                                    break;
+
+                case "PROFILE" :    AttachFragmentToItem(new ProfileFragment());
+                                    break;
+
+                default :   AttachFragmentToItem(new DashboardFragment());
+                            break;
+            }
+
+            return true;
+
+        }
+
+        return false;
 
     }
 

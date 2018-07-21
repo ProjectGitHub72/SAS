@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -20,7 +21,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -51,12 +55,13 @@ public class NewsAdderActivity extends AppCompatActivity {
     private String mImageURI;
     private String mDay;
     private String mTitle;
-    String formattedDate;
-    String formattedTime;
+    private String formattedDate;
+    private String formattedTime;
 
     private boolean isTextReady=false;
     private  boolean isImageReady=false;
-    private boolean isTitleReady=false;
+    private final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
 
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -67,7 +72,6 @@ public class NewsAdderActivity extends AppCompatActivity {
     private static loginInfo_Collector mLoginResultObject;
 
     private SharedPreferences mSharedPref;
-    private SharedPreferences.Editor mPrefEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +84,7 @@ public class NewsAdderActivity extends AppCompatActivity {
         mTitle=null;
 
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        mPrefEditor = mSharedPref.edit();
+
         obtainPreference();
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -109,11 +113,13 @@ public class NewsAdderActivity extends AppCompatActivity {
        mSenderName = intent.getStringExtra("UserValue");
 
 
+
         // Initialize message ListView and its adapter
         List<NewsMessageInfoCollector> newsMessages = new ArrayList<>();
         mNewsAdapter = new NewsMessageAdapter(this, R.layout.item_news_message, newsMessages);
         mNewsListView.setAdapter(mNewsAdapter);
 
+        editTextListeners();
 
         // ImagePickerButton shows an image picker to upload a image for a message
         mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
@@ -126,67 +132,7 @@ public class NewsAdderActivity extends AppCompatActivity {
             }
         });
 
-        // Enable Send button when there's text to send
-        mNewsEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.toString().trim().length() > 0 && isTitleReady) {
-                    mSendButton.setEnabled(true);
-                    isTextReady=true;
-                }
-                else if(charSequence.toString().trim().length() > 0 && !isTitleReady){
-                    mSendButton.setEnabled(false);
-                    isTextReady=true;
-                }
-
-                else {
-                    mSendButton.setEnabled(false);
-                    isTextReady=false;
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
-
-        mNewsEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(DEFAULT_MSG_LENGTH_LIMIT)});
-
-
-        // Enable Send button when there's text to send
-        mTitleEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.toString().trim().length() > 0 && isTextReady) {
-                    mSendButton.setEnabled(true);
-                    isTitleReady=true;
-                    mTitle = mTitleEditText.getText().toString();
-
-                }
-                else if(charSequence.toString().trim().length() > 0 && !isTextReady){
-                    mSendButton.setEnabled(false);
-                    isTitleReady=true;
-                    mTitle = mTitleEditText.getText().toString();
-                }
-
-                else {
-                    mSendButton.setEnabled(false);
-                    isTitleReady=false;
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
 
         // Send button sends a message and clears the EditText
         mSendButton.setOnClickListener(new View.OnClickListener() {
@@ -205,6 +151,9 @@ public class NewsAdderActivity extends AppCompatActivity {
 
                 getCurrentDay();
 
+                mTitle = mTitleEditText.getText().toString();
+
+
                 if(isTextReady) {
                      mNewsMessage = new NewsMessageInfoCollector(mTitle, mNewsEditText.getText().toString(), mSenderName, null, mDay, formattedDate, formattedTime);
                 }
@@ -221,8 +170,12 @@ public class NewsAdderActivity extends AppCompatActivity {
                 mImageUrl.setText("");
 
 
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new NewsFragment()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//                        new NewsFragment()).commit();
+
+                Intent intent =  new Intent(NewsAdderActivity.this,MainActivity.class);
+                intent.putExtra("FRAGMENT","NOTICE");
+                startActivity(intent);
 
 
             }
@@ -234,6 +187,57 @@ public class NewsAdderActivity extends AppCompatActivity {
 
     }
 
+
+    private void editTextListeners() {
+
+        mTitleEditText.addTextChangedListener(watcher);
+        mNewsEditText.addTextChangedListener(watcher);
+        mImageUrl.addTextChangedListener(watcher);
+
+    }
+
+    private final TextWatcher watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        { }
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {}
+        @Override
+        public void afterTextChanged(Editable s) {
+
+            if(
+                    mTitleEditText.getText().toString().length() >0 &&
+                            mNewsEditText.getText().toString().length() > 0 &&
+                            (mImageUrl.getText().toString().length() ==0 )
+                    )            {
+
+                mSendButton.setEnabled(true);
+                isTextReady =true;
+
+            }
+
+            else if(
+                    mTitleEditText.getText().toString().length() >0 &&
+                            (mNewsEditText.getText().toString().length() == 0) &&
+                            mImageUrl.getText().toString().length() > 0
+                    )            {
+
+                mSendButton.setEnabled(true);
+                isImageReady=true;
+
+            }
+
+            else {
+                mSendButton.setEnabled(false);
+                isTextReady =false;
+                isImageReady=false;
+            }
+
+        }
+    };
+
+
     private void addToDatabase(NewsMessageInfoCollector newsMessage){
         mNewsDatabaseReference.push().setValue(newsMessage);
 
@@ -244,11 +248,23 @@ public class NewsAdderActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
-            Uri selectedImageUri = data.getData();
-            final StorageReference photoRef = mNewsPhotoStorageReference.child(selectedImageUri.getLastPathSegment());
-            photoRef.putFile(selectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            final StorageReference photoRef = mNewsPhotoStorageReference.child(randomAlphaNumeric(8));
+            UploadTask uploadTask = photoRef.putFile(data.getData());
+
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    // Continue with the task to get the download URL
+                    return photoRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
 
                     // create a calendar
                     Calendar calendar = Calendar.getInstance();
@@ -260,20 +276,17 @@ public class NewsAdderActivity extends AppCompatActivity {
                     getCurrentDay();
 
 
-                   mImageURI = photoRef.getDownloadUrl().toString();
+                    mImageURI = task.getResult().toString();
 
-                    mImageUrl.setText(mImageURI);
-                    isImageReady=true;
-
-                    if(isTitleReady)
-                    mSendButton.setEnabled(true);
-
+                    mImageUrl.setText(mImageURI);   }
                 }
             });
+
+
+
         }
         else if(requestCode==RC_PHOTO_PICKER && resultCode == RESULT_CANCELED){
             Toast.makeText(this, "Not an Image", Toast.LENGTH_SHORT).show();
-            isImageReady=false;
         }
 
     }
@@ -395,4 +408,48 @@ public class NewsAdderActivity extends AppCompatActivity {
         );
     }
 
+    public String randomAlphaNumeric(int count) {
+        StringBuilder builder = new StringBuilder();
+        while (count-- != 0) {
+            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
+            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+        }
+        return builder.toString();
+    }
+
 }
+
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+//            Uri selectedImageUri = data.getData();
+//            final StorageReference photoRef = mNewsPhotoStorageReference.child(selectedImageUri.getLastPathSegment());
+//            photoRef.putFile(selectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//                    // create a calendar
+//                    Calendar calendar = Calendar.getInstance();
+//                    Date date = new Date(calendar.getTimeInMillis());
+//
+//                    formattedDate = formatDate(date);
+//                    formattedTime = formatTime(date);
+//
+//                    getCurrentDay();
+//
+//
+//                    mImageURI = photoRef.getDownloadUrl().toString();
+//
+//                    mImageUrl.setText(mImageURI);
+//
+//                }
+//            });
+//        }
+//        else if(requestCode==RC_PHOTO_PICKER && resultCode == RESULT_CANCELED){
+//            Toast.makeText(this, "Not an Image", Toast.LENGTH_SHORT).show();
+//        }
+//
+//    }

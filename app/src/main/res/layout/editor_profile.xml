@@ -107,6 +107,7 @@
             style="@style/EditorFieldStyle"/>
 
         <TextView
+            android:id="@+id/facultyTVProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="20dp"
@@ -125,6 +126,7 @@
             android:hint="BCT"/>
 
         <TextView
+            android:id="@+id/yearTVProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="20dp"
