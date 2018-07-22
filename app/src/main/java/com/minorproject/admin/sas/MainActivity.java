@@ -39,7 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,DashboardFragment.MyInterface {
 
 
     private static FirebaseUser mUser;
@@ -249,9 +249,17 @@ public class MainActivity extends AppCompatActivity
     private boolean sideBarNavigation(MenuItem item) {
         int id = item.getItemId();
         Fragment selectedFragment = null;
+        NavigationView navigationView =findViewById(R.id.nav_view);
+
+
+        if(id!=R.id.nav_profile)
+            navigationView.getMenu().findItem(R.id.nav_profile).setChecked(false);
+
+
 
         if (id == R.id.nav_dashboard) {
 
+            navigationView.getMenu().findItem(R.id.nav_dashboard).setChecked(true);
             selectedFragment = new DashboardFragment();
 
         } else if (id == R.id.nav_news) {
@@ -476,8 +484,8 @@ public class MainActivity extends AppCompatActivity
                 case "PROFILE" :    AttachFragmentToItem(new ProfileFragment());
                                     break;
 
-                default :   AttachFragmentToItem(new DashboardFragment());
-                            break;
+                default :            AttachFragmentToItem(new DashboardFragment());
+                                     break;
             }
 
             return true;
@@ -488,7 +496,44 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void setNAvFromFrag(String navItem) {
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
+        navigationView.getMenu().findItem(R.id.nav_profile).setChecked(false);
+        navigationView.getMenu().findItem(R.id.nav_logout).setChecked(false);
+
+
+        switch (navItem){
+
+
+
+            case "DASHBOARD" :
+                navigationView.getMenu().findItem(R.id.nav_dashboard).setChecked(true);
+                navigationView.getMenu().findItem(R.id.nav_profile).setChecked(false);
+                navigationView.getMenu().findItem(R.id.nav_logout).setChecked(false);
+
+                break;
+
+            case "NOTICE" :
+                navigationView.getMenu().findItem(R.id.nav_news).setChecked(true);
+                break;
+
+            case "PROFILE" :
+                navigationView.getMenu().findItem(R.id.nav_profile).setChecked(true);
+                navigationView.getMenu().findItem(R.id.nav_dashboard).setChecked(false);
+
+                break;
+
+            case "PERFORMANCE" :
+                navigationView.getMenu().findItem(R.id.nav_performance).setChecked(true);
+                break;
+
+
+        }
+
+
+    }
 
 }
 

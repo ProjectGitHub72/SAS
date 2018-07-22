@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#6543">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".AttendanceActivity"
+    android:background="@color/colorPrimary">
 
     <TextView
         android:id="@+id/faculty_permA_view"

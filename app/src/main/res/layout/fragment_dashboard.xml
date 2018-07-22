@@ -1,142 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginRight="6dp"
-    android:layout_marginLeft="4dp"
-    tools:context=".DashboardFragment">
+    tools:context=".DashboardFragment" >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:background="#fcfcfc"
+        android:gravity="center">
         <LinearLayout
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
+            <android.support.v7.widget.CardView
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:id="@+id/DashboardCV"
+                android:layout_width="160dp"
+                android:layout_height="190dp"
+                android:layout_margin="10dp"
+                android:focusable="true">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/circle_shape_purple"
+                        android:src="@drawable/ic_dashboard_black_24dp"
+                        android:padding="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"
+                        android:text="Dashboard"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/lightGray"
+                        android:layout_margin="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Home Screen"
+                        android:padding="5dp"
+                        android:textColor="@android:color/darker_gray"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp">
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-        <TextView
-            android:id="@+id/dashWelcomeView1"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textStyle="italic"
-            android:textSize="20dp"
-            android:text="Welcome Back, "/>
+            <android.support.v7.widget.CardView
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/NoticeCV"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="160dp"
+                android:layout_height="190dp"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/circle_shape_pink"
+                        android:src="@drawable/ic_news_black_24dp"
+                        android:padding="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"
+                        android:text="Notice"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/lightGray"
+                        android:layout_margin="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Check for any Notices"
+                        android:padding="5dp"
+                        android:textColor="@android:color/darker_gray"/>
 
-        <TextView
-            android:id="@+id/dashWelcomeView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textStyle="italic"
-            android:textSize="20dp"
-            android:text="User"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
         </LinearLayout>
-
-
-
-
-
-        <RelativeLayout
+        <LinearLayout
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_height="wrap_content">
 
-
-            <TextView
-                android:id="@+id/profcheck1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Checkout Your Profile : "
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="20dp" />
-
-                <ImageButton
-                    android:id="@+id/profileButton"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_below="@id/profcheck1"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/ic_person_black_24dp"
-                    android:background="@color/colorPrimary"/>
-
-
-        </RelativeLayout>
-
-
-                <RelativeLayout
+            <android.support.v7.widget.CardView
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/PerformanceCV"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="160dp"
+                android:layout_height="190dp"
+                android:layout_margin="10dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    >
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/circle_shape_green"
+                        android:src="@drawable/ic_performance_black_24dp"
+                        android:padding="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"
+                        android:text="Performance"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/lightGray"
+                        android:layout_margin="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="How well are you doing?"
+                        android:padding="5dp"
+                        android:textColor="@android:color/darker_gray"/>
 
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/ProfileCV"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="160dp"
+                android:layout_height="190dp"
+                android:layout_margin="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/circle_shape_yellow"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_person_black_24dp" />
 
                     <TextView
-                        android:id="@+id/newscheck1"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Check For Notices : "
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textSize="20dp" />
+                        android:layout_marginTop="10dp"
+                        android:text="Profile"
+                        android:textStyle="bold" />
 
-                        <ImageButton
-                            android:id="@+id/noticeButton"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_below="@id/newscheck1"
-                            android:layout_centerHorizontal="true"
-                            android:src="@drawable/ic_news_black_24dp"
-                            android:background="@color/colorPrimary"/>
-
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    >
-
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="10dp"
+                        android:background="@color/lightGray" />
 
                     <TextView
-                        android:id="@+id/perfcheck1"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Check Your Performance : "
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textSize="20dp" />
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:text="Manage Your Info"
+                        android:textColor="@android:color/darker_gray" />
 
-                        <ImageButton
-                            android:id="@+id/performanceButton"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_below="@id/perfcheck1"
-                            android:layout_centerHorizontal="true"
-                            android:src="@drawable/ic_performance_black_24dp"
-                            android:background="@color/colorPrimary"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
+        </LinearLayout>
+        <LinearLayout
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-                </RelativeLayout>
+            <android.support.v7.widget.CardView
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/LogoutCV"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_width="340dp"
+                android:layout_height="150dp"
+                android:layout_margin="10dp">
+                <LinearLayout
 
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/circle_shape_purple"
+                        android:src="@drawable/ic_lock_black_24dp"
+                        android:padding="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"
+                        android:text="Logout"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/lightGray"
+                        android:layout_margin="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Change The Account"
+                        android:padding="5dp"
+                        android:textColor="@android:color/darker_gray"/>
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
 
         </LinearLayout>
+    </LinearLayout>
 
-        <TextView
-            android:layout_marginTop="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Try Navigation Bar to look around."
-            android:textSize="15dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"/>
-
-
-</RelativeLayout>
+</ScrollView>
