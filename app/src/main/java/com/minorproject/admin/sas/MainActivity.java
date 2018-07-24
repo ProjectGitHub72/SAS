@@ -78,10 +78,6 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        //TODO:For now
-//        signOutScreen();
-
-
         loadViewsAndData();
 
         if(!isIntentFromFragment())
@@ -237,6 +233,7 @@ public class MainActivity extends AppCompatActivity
                                 new AuthUI.IdpConfig.EmailBuilder().build(),
                                 new AuthUI.IdpConfig.GoogleBuilder().build()
                         ))
+                        .setTheme(R.style.LoginTheme)
                         .build(),RC_SIGN_IN);
     }
 

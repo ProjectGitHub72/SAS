@@ -72,11 +72,16 @@
         android:paddingLeft="20dp"
         android:text="KEC-ian"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGrayBorder"
+        android:layout_margin="10dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:paddingTop="20dp"
         android:paddingBottom="2dp"
         android:text="User Email"
         android:textColor="@android:color/black"/>
@@ -88,12 +93,17 @@
         android:paddingLeft="20dp"
         android:text="kec@kec.com"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGrayBorder"
+        android:layout_margin="10dp"/>
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:paddingTop="20dp"
         android:paddingBottom="2dp"
         android:text="User Status"
         android:textColor="@android:color/black"/>
@@ -105,11 +115,16 @@
         android:paddingLeft="20dp"
         android:text="Student"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGrayBorder"
+        android:layout_margin="10dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:paddingTop="20dp"
         android:paddingBottom="2dp"
         android:text="Roll No"
         android:textColor="@android:color/black"/>
@@ -121,11 +136,16 @@
         android:paddingLeft="20dp"
         android:text="720xx"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGrayBorder"
+        android:layout_margin="10dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:paddingTop="20dp"
         android:paddingBottom="2dp"
         android:text="Faculty"
         android:textColor="@android:color/black"/>
@@ -137,11 +157,16 @@
         android:paddingLeft="20dp"
         android:text="BCT"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGrayBorder"
+        android:layout_margin="10dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:paddingTop="20dp"
         android:paddingBottom="2dp"
         android:text="Year"
         android:textColor="@android:color/black"/>
@@ -153,11 +178,17 @@
         android:paddingLeft="20dp"
         android:text="2072"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGrayBorder"
+        android:layout_margin="10dp"/>
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:paddingTop="20dp"
         android:paddingBottom="2dp"
         android:text="User ID"
         android:textColor="@android:color/black"/>

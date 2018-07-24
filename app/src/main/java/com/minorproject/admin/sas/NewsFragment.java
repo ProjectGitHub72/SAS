@@ -143,10 +143,10 @@ public class NewsFragment extends Fragment {
     private void checkPriority() {
 
 
-        if (mLoginResultObject.getPriority_level() == 0) {
-            isAdmin = false;
-        } else
+        if (mLoginResultObject.getPriority_level() == 2) {
             isAdmin = true;
+        } else
+            isAdmin = false;
 
     }
 

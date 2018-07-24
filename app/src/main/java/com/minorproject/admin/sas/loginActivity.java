@@ -16,7 +16,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -267,24 +270,63 @@ public class loginActivity extends AppCompatActivity{
     }
 
     private void loadStorageData() {
-        final StorageReference photoRef = mUserPicStorageRef.child(mUser.getUid());
-        photoRef.putFile(photo_store_uri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//        final StorageReference photoRef = mUserPicStorageRef.child(mUser.getUid());
+//        photoRef.putFile(photo_store_uri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//
+//                photo_url = photoRef.getDownloadUrl().toString();
+//
+//                mSelectedImageUrl_textView.setText(photo_url);
+//
+//                isImageReady = true;
+//                imageUriloaded = true;
+//
+//
+//
+//            }
+//        });
 
 
-                photo_url = photoRef.getDownloadUrl().toString();
 
-                mSelectedImageUrl_textView.setText(photo_url);
+            final StorageReference photoRef = mUserPicStorageRef.child(mUser.getUid());
+            UploadTask uploadTask = photoRef.putFile(photo_store_uri);
 
-                isImageReady = true;
-                imageUriloaded = true;
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    // Continue with the task to get the download URL
+                    return photoRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+
+
+                        photo_url = task.getResult().toString();
+
+                        mSelectedImageUrl_textView.setText(photo_url);
+
+                        isImageReady = true;
+                        imageUriloaded = true;
+
+                    }
+                }
+            });
 
 
 
-            }
-        });
-    }
+
+        }
+
+
+
 
 
     @Override

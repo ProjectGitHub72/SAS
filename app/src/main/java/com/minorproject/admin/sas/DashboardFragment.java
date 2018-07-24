@@ -42,6 +42,8 @@ public class DashboardFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
+        getActivity().setTitle("Dashboard");
+
 
         mDashboard = rootView.findViewById(R.id.DashboardCV);
         mNotice = rootView.findViewById(R.id.NoticeCV);
