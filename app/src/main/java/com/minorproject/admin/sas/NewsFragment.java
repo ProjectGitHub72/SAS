@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 
@@ -25,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -47,13 +49,15 @@ public class NewsFragment extends Fragment {
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mNewsDatabaseReference;
+    private DatabaseReference mDBLinkRef;
+    private DatabaseReference userDataRef;
     private ChildEventListener mChildEventListener;
 
+    private String DbLink;
+    private String DbLinkKeyValue;
 
-    private static loginInfo_Collector mLoginResultObject;
+
     private boolean isAdmin = false;
-
-    private SharedPreferences mSharedPref;
 
 
     public NewsFragment() {
@@ -74,21 +78,100 @@ public class NewsFragment extends Fragment {
             MainActivity.isPersistenceOn = true;
         }
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
-        mSharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if(!MainActivity.noInternet)
+        loadDatabase(rootView);
 
-        obtainPreference();
+
+
+        getActivity().setTitle("Notice");
+        return rootView;
+
+    }
+
+    private void loadDatabase(final View rootView) {
+
+        if(MainActivity.UserInstanceForFragment()!=null) {
+            mFirebaseDatabase = FirebaseDatabase.getInstance();
+            userDataRef = mFirebaseDatabase.getReference()
+                    .child("app")
+                    .child("users")
+                    .child(MainActivity.UserInstanceForFragment().getUid());
+
+
+            userDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                  for(DataSnapshot users : dataSnapshot.child("accountLinks").getChildren())
+                    DbLink = users.getKey();
+
+                  mSenderName = dataSnapshot.child("info").child("firstName").getValue().toString()
+                          + " " + dataSnapshot.child("info").child("lastName").getValue().toString();
+
+                    String priority_node = ((dataSnapshot.
+                            child("accountLinks").getValue().toString()).split("="))[1];
+                    if(priority_node.contains("0"))
+                        isAdmin = true;
+                    else if(priority_node.contains("1"))
+                        isAdmin = false;
+                    else if(priority_node.contains("2"))
+                        isAdmin=false;
+
+
+                  loadDbLinkDatabase(rootView);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    Toast.makeText(getActivity(), "Database account Failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
+
+
+    }
+
+    private void loadDbLinkDatabase(final View rootView) {
+
+        mDBLinkRef = mFirebaseDatabase.getReference()
+                .child("app")
+                .child("database_link")
+                .child(DbLink);
+
+        mDBLinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DbLinkKeyValue = dataSnapshot.getValue().toString();
+                loadNewsRefDatabase(rootView);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                Toast.makeText(getActivity(), "Database Link Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void loadNewsRefDatabase(View rootView) {
+
 
         mNewsDatabaseReference = mFirebaseDatabase.getReference()
-                .child(mLoginResultObject.getFaculty_symbol())
-                .child(mLoginResultObject.getYear())
-                .child("notice_node");
+                .child("app")
+                .child("app_data")
+                .child(DbLinkKeyValue)
+                .child("news_database");
+
+        afterLoadingDatabase(rootView);
+    }
 
 
-        checkPriority();
+    private void afterLoadingDatabase(View rootView){
 
-        mSenderName = mLoginResultObject.getName();
 
 
         // Initialize references to views
@@ -112,7 +195,8 @@ public class NewsFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), NewsAdderActivity.class);
-                    intent.putExtra("UserValue", mSenderName);
+                    intent.putExtra("USERNAME", mSenderName);
+                    intent.putExtra("DBKEY",DbLinkKeyValue);
                     startActivity(intent);
                 }
             });
@@ -123,32 +207,8 @@ public class NewsFragment extends Fragment {
 
 
         attachDatabaseReadListener();
-
-        getActivity().setTitle("Notice");
-        return rootView;
-
     }
 
-    private void obtainPreference() {
-        mLoginResultObject = new loginInfo_Collector(
-                mSharedPref.getString(getString(R.string.NAME), ""),
-                mSharedPref.getString(getString(R.string.ROLL), ""),
-                mSharedPref.getString(getString(R.string.FACULTY), ""),
-                mSharedPref.getString(getString(R.string.YEAR), ""),
-                mSharedPref.getString(getString(R.string.PHOTO_URL), ""),
-                mSharedPref.getInt(getString(R.string.PRIORITY), 0)
-        );
-    }
-
-    private void checkPriority() {
-
-
-        if (mLoginResultObject.getPriority_level() == 2) {
-            isAdmin = true;
-        } else
-            isAdmin = false;
-
-    }
 
 
     private void attachDatabaseReadListener() {

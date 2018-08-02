@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/black_overlay"
     tools:context=".ProfileFragment">
 
 
 <LinearLayout
      android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -24,7 +24,7 @@
         android:id="@+id/profileImageView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@mipmap/ic_launcher_round"
+        android:src="@drawable/ic_launcher_foreground11"
         android:scaleType="centerCrop"/>
 
     <TextView
@@ -37,7 +37,7 @@
         android:layout_alignBottom="@id/profileImageView"
         android:layout_margin="1dp"
         android:gravity="bottom"
-        android:text="Hello"
+        android:text="Kec-ian"
         android:textColor="#FFFFFF"
         android:paddingLeft="30dp"
         android:paddingBottom="20dp"/>
@@ -126,7 +126,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
         android:paddingBottom="2dp"
-        android:text="Roll No"
+        android:text="Unique ID"
         android:textColor="@android:color/black"/>
 
     <TextView
@@ -147,36 +147,15 @@
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
         android:paddingBottom="2dp"
-        android:text="Faculty"
+        android:text="Database Link"
         android:textColor="@android:color/black"/>
 
     <TextView
-        android:id="@+id/profileFacultyView"
+        android:id="@+id/profileDbLinkView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:text="BCT"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/lightGrayBorder"
-        android:layout_margin="10dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
-        android:paddingBottom="2dp"
-        android:text="Year"
-        android:textColor="@android:color/black"/>
-
-    <TextView
-        android:id="@+id/profileYearView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
-        android:text="2072"/>
+        android:text="072Faculty"/>
 
     <View
         android:layout_width="match_parent"

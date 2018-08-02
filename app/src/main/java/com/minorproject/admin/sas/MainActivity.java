@@ -16,13 +16,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,16 +50,21 @@ public class MainActivity extends AppCompatActivity
     FirebaseAuth.AuthStateListener mAuthStateListener;
 
     private static final int RC_SIGN_IN = 1;
-    private static boolean noInternet = true;
+    public static boolean noInternet = true;
     public static boolean isPersistenceOn = false;
     private boolean newLogin = false;
 
     private ProgressBar mProgressBar;
 
-    private FirebaseDatabase mFirebaseDatabse;
-    private DatabaseReference mUSerListDbRef;
 
-    private SharedPreferences mSharedPref;
+    private ImageView mUserImageView;
+    private TextView mUserNameView;
+    private TextView mUserEmailView;
+
+
+
+    private int mPriority=2;
+    private static boolean newDataAvailable = false;
 
 
     @Override
@@ -184,27 +187,37 @@ public class MainActivity extends AppCompatActivity
 
         newLoginLoad();
 
-        mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!newDataAvailable) {
+            mUsername = mUser.getDisplayName();
+            mUserPhotoUri = mUser.getPhotoUrl();
+        }
 
-        mUsername = mSharedPref.getString(getString(R.string.NAME),mUser.getDisplayName());
         mUserEmail = mUser.getEmail();
-        mUserPhotoUri = Uri.parse(mSharedPref.getString(getString(R.string.PHOTO_URL),""));
 
 
-
-        ImageView mUserImageView;
-        TextView mUserNameView;
-        TextView mUserEmailView;
 
         NavigationView navigationView = findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
         Menu menu = navigationView.getMenu();
 
 
-        if(mSharedPref.getInt(getString(R.string.PRIORITY),0)==0)
+        if(newDataAvailable) {
+            if (mPriority == 2)
+                menu.findItem(R.id.nav_attendance).setVisible(false);
+            else
+                menu.findItem(R.id.nav_attendance).setVisible(true);
+        }
+        else{
             menu.findItem(R.id.nav_attendance).setVisible(false);
-        else
-            menu.findItem(R.id.nav_attendance).setVisible(true);
+        }
+
+                loadNavigationData();
+
+    }
+
+    private void loadNavigationData() {
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
 
 
         mUserImageView = headerView.findViewById(R.id.userImageView);
@@ -214,13 +227,14 @@ public class MainActivity extends AppCompatActivity
         mUserNameView.setText(mUsername);
         mUserEmailView.setText(mUserEmail);
 
-        Glide
-                .with(this)
-                .load(mUserPhotoUri) // the uri you got from Firebase
-                .centerCrop()
-                .into(mUserImageView); //Your imageView variable
-
-
+        if(mUserPhotoUri!=null) {
+            Glide
+                    .with(MainActivity.this)
+                    .load(mUserPhotoUri) // the uri you got from Firebase
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_launcher_foreground11)
+                    .into(mUserImageView); //Your imageView variable
+        }
     }
 
     private void signOutScreen() {
@@ -268,10 +282,6 @@ public class MainActivity extends AppCompatActivity
 
             selectedFragment = new PerformanceFragment();
 
-
-        } else if (id == R.id.nav_result) {
-
-            selectedFragment = new ResultFragment();
 
         } else if (id == R.id.nav_attendance) {
 
@@ -357,6 +367,7 @@ public class MainActivity extends AppCompatActivity
                 boolean connected = snapshot.getValue(Boolean.class);
                 if (connected) {
                     if(mUser!=null)
+
                         onSignedInInitializeNavSide(mUser);
 
                     NetworkAvailable();
@@ -394,12 +405,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-//        if(requestCode == RC_NEW_LOGIN){
-//            if(resultCode == RESULT_OK){
-//                Toast.makeText(this, "Profile Complete", Toast.LENGTH_SHORT).show();
-////                loginInfo_Collector result_login_object = (loginInfo_Collector) data.getExtras().getSerializable("LOGIN_OBJECT");
-//            }
-//        }
 
 
     }
@@ -412,48 +417,81 @@ public class MainActivity extends AppCompatActivity
 
         databaseLoad();
 
-//        mProgressBar.setVisibility(View.INVISIBLE);
-//        if(newLogin){
-//            newLogin = false;
-//            Intent intent = new Intent(this,loginActivity.class);
-//            startActivity(intent);
-//        }
 
     }
 
     private void databaseLoad(){
-        mFirebaseDatabse = FirebaseDatabase.getInstance();
-        mUSerListDbRef = mFirebaseDatabse.getReference().child("UserList");
+
+         FirebaseDatabase mFirebaseDatabase;
+         DatabaseReference mNewUsersRef;
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mNewUsersRef = mFirebaseDatabase.getReference().child("app")
+                .child("users");
 
 
-        mUSerListDbRef.addValueEventListener(new ValueEventListener() {
+        mNewUsersRef.addValueEventListener(new ValueEventListener() {
             @Override
 
 
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                int count=0;
-                for(DataSnapshot users : dataSnapshot.getChildren()){
+                if(dataSnapshot.getValue()!=null) {
+                    int count = 0;
+                    for (DataSnapshot users : dataSnapshot.getChildren()) {
 
-                    if(mUser!=null)
-                        if(mUser.getUid().contentEquals(users.getKey())){
-                            count++;
-                        }
+                        if (mUser != null)
+                            if (mUser.getUid().contentEquals(users.getKey())) {
+                                count++;
+                            }
 
-                }
+                    }
 
-                if(count==0){
-                    newLogin = true;
-                }
-                else
-                    newLogin = false;
+                    if (count == 0) {
+                        newLogin = true;
+                    } else
+                        newLogin = false;
 
 
-                mProgressBar.setVisibility(View.INVISIBLE);
-                if(newLogin){
-                    newLogin = false;
-                    Intent intent = new Intent(MainActivity.this,loginActivity.class);
-                    startActivity(intent);
+                    mProgressBar.setVisibility(View.INVISIBLE);
+                    if (newLogin) {
+                        newLogin = false;
+                        Intent intent = new Intent(MainActivity.this, loginActivity.class);
+                        startActivity(intent);
+                    } else {
+
+                        if (dataSnapshot.child(mUser.getUid()).child("info").child("firstName").getValue() != null
+                                && dataSnapshot.child(mUser.getUid()).child("info").child("lastName").getValue() != null
+                                && dataSnapshot.child(mUser.getUid()).child("accountLinks").hasChildren()) {
+                            mUsername = dataSnapshot.child(mUser.getUid()).child("info").child("firstName").getValue().toString()
+                                    + dataSnapshot.child(mUser.getUid()).child("info").child("lastName").getValue().toString();
+
+                            if(dataSnapshot.child(mUser.getUid()).child("info").child("photoUrl").exists())
+                            mUserPhotoUri = Uri.parse(dataSnapshot.child(mUser.getUid()).child("info").child("photoUrl").getValue().toString());
+
+
+                            String priority_node = ((dataSnapshot.child(mUser.getUid()).child("accountLinks").getValue().toString()).split("="))[1];
+                            if (priority_node.contains("0"))
+                                mPriority = 0;
+                            else if (priority_node.contains("1"))
+                                mPriority = 1;
+                            else if (priority_node.contains("2"))
+                                mPriority = 2;
+
+
+                            NavigationView navigationView = findViewById(R.id.nav_view);
+                            Menu menu = navigationView.getMenu();
+                            if (mPriority == 2)
+                                menu.findItem(R.id.nav_attendance).setVisible(false);
+                            else
+                                menu.findItem(R.id.nav_attendance).setVisible(true);
+
+
+                            newDataAvailable = true;
+                            loadNavigationData();
+                        } else
+                            databaseLoad();
+                    }
                 }
 
             }
@@ -461,6 +499,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                Toast.makeText(MainActivity.this, "DB Error checking Available Users", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -531,6 +570,11 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
+
+
+
+
 
 }
 

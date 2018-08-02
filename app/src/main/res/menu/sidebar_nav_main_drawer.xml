@@ -17,21 +17,13 @@
             android:id="@+id/nav_performance"
             android:icon="@drawable/ic_performance_black_24dp"
             android:title="Performance" />
-        <item
-            android:id="@+id/nav_result"
-            android:icon="@drawable/ic_result_black_24dp"
-            android:title="Result" />
+
 
         <item
             android:id="@+id/nav_attendance"
             android:icon="@drawable/ic_attendance_black_24dp"
             android:title="Attendance" />
 
-        <item
-            android:id="@+id/nav_authorize"
-            android:icon="@drawable/ic_users_black_24dp"
-            android:title="Authorize"
-            android:visible="false"/>
 
     </group>
 

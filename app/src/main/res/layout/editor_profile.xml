@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".ProfileActivity">
 
 
@@ -88,62 +89,26 @@
             style="@style/EditorFieldStyle"
             android:hint="ImageUri"/>
 
+
         <TextView
+            android:id="@+id/profileUniqueIDTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="20dp"
             android:paddingTop="20dp"
             android:paddingBottom="2dp"
-            android:text="Priority Key"
+            android:text="Database Link"
             style="@style/CategoryStyle"
             android:textColor="@android:color/black"/>
 
         <EditText
-            android:id="@+id/profileStatusET"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:hint="KEY"
-            style="@style/EditorFieldStyle"/>
-
-        <TextView
-            android:id="@+id/facultyTVProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="2dp"
-            android:text="Faculty"
-            style="@style/CategoryStyle"
-            android:textColor="@android:color/black"/>
-
-        <EditText
-            android:id="@+id/profileFacultyET"
+            android:id="@+id/profileUniqueIDET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="20dp"
             style="@style/EditorFieldStyle"
-            android:hint="BCT"/>
+            android:hint="072BE**"/>
 
-        <TextView
-            android:id="@+id/yearTVProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="2dp"
-            android:text="Year"
-            style="@style/CategoryStyle"
-            android:textColor="@android:color/black"/>
-
-        <EditText
-            android:id="@+id/profileYearET"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            style="@style/EditorFieldStyle"
-            android:inputType="number"
-            android:hint="2072"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -191,6 +156,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="20dp"
+            android:background="@drawable/mybutton"
             android:enabled="false"
             android:text="Update"/>
 

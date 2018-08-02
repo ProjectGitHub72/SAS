@@ -1,210 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cardview_dark_background">
+
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="8dp"
     tools:context=".loginActivity">
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/name_login_view"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:paddingTop="16dp"
-            style="@style/CategoryStyle"
-            android:text="Name : "/>
-
-
-        <EditText
-            android:id="@+id/name_login_editText"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@id/name_login_view"
-            android:hint="Enter_Registration_Name"
-            android:inputType="textCapWords"
-            style="@style/EditorFieldStyle"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/roll_login_view"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:paddingTop="16dp"
-            style="@style/CategoryStyle"
-            android:text="Roll No :"/>
-
-
-        <EditText
-            android:id="@+id/roll_login_editText"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@id/roll_login_view"
-            android:hint="720xx"
-            android:inputType="numberDecimal"
-            style="@style/EditorFieldStyle"/>
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/faculty_login_view"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:paddingTop="16dp"
-            style="@style/CategoryStyle"
-            android:text="Faculty symbol :"/>
-
-
-        <EditText
-            android:id="@+id/faculty_login_editText"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@id/faculty_login_view"
-            android:hint="BCT"
-            android:inputType="textCapCharacters"
-            style="@style/EditorFieldStyle"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/join_year_view"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:paddingTop="16dp"
-            style="@style/CategoryStyle"
-            android:text="Year Of Join :"/>
-
-
-        <EditText
-            android:id="@+id/join_year_editText"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@id/join_year_view"
-            android:hint="2072"
-            android:inputType="numberDecimal"
-            style="@style/EditorFieldStyle"/>
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/image_login_view"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:paddingTop="16dp"
-            style="@style/CategoryStyle"
-            android:text="Select an Image :"/>
-
-
-        <ImageButton
-            android:id="@+id/imageButton_login"
-            android:layout_toRightOf="@id/image_login_view"
-            android:layout_marginLeft="15dp"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@android:drawable/ic_menu_gallery" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/imageUrl_loginView"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:paddingTop="16dp"
-            style="@style/CategoryStyle"
-            android:text="ImageURL :"/>
-
-
-        <TextView
-            android:id="@+id/imageUrl_login_textMain"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:paddingTop="16dp"
-            android:hint="Selected Image URL"
-            android:layout_toRightOf="@id/imageUrl_loginView"
-            style="@style/CategoryStyle"/>
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/priority_loginView"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:paddingTop="16dp"
-            style="@style/CategoryStyle"
-            android:text="Permission key :"/>
-
-
-        <EditText
-            android:id="@+id/priority_login_EditText"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/priority_loginView"
-            android:hint="Enter 0 for student"
-            android:inputType="text"
-            style="@style/EditorFieldStyle"/>
-
-    </RelativeLayout>
-
-
     <Button
-        android:id="@+id/submit_login_button"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/mybutton"
+        android:textColor="@color/backgroundColor"
+        android:padding="10dp"
+        android:text="Non-Admin" />
+
+    <TextView
         android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/backgroundColor"
+        android:textStyle="italic"
+        android:text="Email Address"/>
+
+    <EditText
+        android:id="@+id/Email_Login_ET"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittextbutton"
+        android:hint="  Enter email"/>
+
+
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/lightGrayBorder"
+        android:text="Use the information provided by admin:"/>
+
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/backgroundColor"
+        android:textStyle="italic"
+        android:text="Database Link"/>
+
+    <EditText
+        android:id="@+id/DBLink_Login_ET"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittextbutton"
+        android:paddingLeft="8dp"
+        android:hint="Eg: 072BCT"/>
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/backgroundColor"
+        android:textStyle="italic"
+        android:text="Unique Identifier"/>
+
+    <EditText
+        android:id="@+id/UIdentifier_Login_ET"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittextbutton"
+        android:inputType="textCapCharacters"
+        android:paddingLeft="8dp"
+        android:hint="Eg: BCT720"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp">
+
+        <RadioButton
+            android:id="@+id/RadioStudent_LoginET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@color/backgroundColor"/>
+
+        <RadioButton
+            android:id="@+id/RadioTeacher_LoginET"
+            android:layout_marginLeft="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@color/backgroundColor"
+            android:text="Teacher"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/SubmitButton_Login_ET"
+        android:layout_margin="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/mybutton"
+        android:textColor="@color/backgroundColor"
         android:enabled="false"
-        android:text="Submit"/>
-
-
+        android:clickable="true"
+        android:focusable="true"
+        android:text="Submit" />
 
 </LinearLayout>
+
+</ScrollView>

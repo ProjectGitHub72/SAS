@@ -15,11 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,18 +31,16 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
 
     private ArrayList<Uri> mPhotoUriList = new ArrayList<>();
     private ArrayList<String> mNameList = new ArrayList<>();
-    private ArrayList<String> uIdList = new ArrayList<>();
     private ArrayList<String> mRollList = new ArrayList<>();
 
     private ArrayList<String> mRollDisplayList = new ArrayList<>();
     private ArrayList<Uri> mPhotoUriDisplayList = new ArrayList<>();
     private ArrayList<String> mNameDisplayList = new ArrayList<>();
-    private ArrayList<String> mUidDisplayList = new ArrayList<>();
 
 
     private TextView mSubjectTextViewTop;
-    private TextView mTeacherViewTop;
-    private TextView mFacultyViewTop;
+    private TextView mRollViewTop;
+
 
     private TextView mRollViewMid;
     private TextView mStudentNameViewMid;
@@ -56,7 +51,7 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
 
     private String formattedDate;
     private int focusedPage = 0;
-
+    private View page;
 
 
 
@@ -120,11 +115,11 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
                 if (direction==Direction.up){
                     //do your stuff
 
-                    mUser_dataAttRef.child(mUidDisplayList.get(focusedPage))
+                    mUser_dataAttRef.child(mRollDisplayList.get(focusedPage))
                             .child("attendance")
                             .child(AttendanceActivity.mSubCodeI)
                             .child(formattedDate)
-                            .child(MainActivity.UserInstanceForFragment().getUid())
+                            .child(AttendanceActivity.selfUniqueIdentifier)
                             .setValue("present");
 
                     Toast.makeText(context, "Present", Toast.LENGTH_SHORT).show();
@@ -133,11 +128,11 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
                 if (direction==Direction.down){
                     //do your stuff
 
-                    mUser_dataAttRef.child(mUidDisplayList.get(focusedPage))
+                    mUser_dataAttRef.child(mRollDisplayList.get(focusedPage))
                             .child("attendance")
                             .child(AttendanceActivity.mSubCodeI)
                             .child(formattedDate)
-                            .child(MainActivity.UserInstanceForFragment().getUid())
+                            .child(AttendanceActivity.selfUniqueIdentifier)
                             .setValue("absent");
 
                     Toast.makeText(context, "Absent", Toast.LENGTH_SHORT).show();
@@ -151,12 +146,11 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
-        View page = inflater.inflate(R.layout.attendance_adapter, null);
+         page = inflater.inflate(R.layout.attendance_adapter, null);
 
 
             mSubjectTextViewTop = page.findViewById(R.id.subject_permA_view);
-            mFacultyViewTop = page.findViewById(R.id.faculty_permA_view);
-            mTeacherViewTop = page.findViewById(R.id.teacher_permA_view);
+            mRollViewTop = page.findViewById(R.id.rollRange_permA_view);
 
             mRollViewMid = page.findViewById(R.id.attend_roll);
             mStudentNameViewMid = page.findViewById(R.id.attend_name);
@@ -170,12 +164,15 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
             mRollViewMid.setText(mRollDisplayList.get(position));
             mStudentNameViewMid.setText(mNameDisplayList.get(position));
 
-        Glide
-                .with(context)
-                .load(mPhotoUriDisplayList.get(position)) // the uri you got from Firebase
-                .centerCrop()
-                .into(mStudentImageViewMid); //Your imageView variable
-
+            if(mPhotoUriDisplayList.size()!=0)
+            if(mPhotoUriDisplayList.get(position)!=null) {
+                Glide
+                        .with(context)
+                        .load(mPhotoUriDisplayList.get(position)) // the uri you got from Firebase
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_launcher_foreground11)
+                        .into(mStudentImageViewMid); //Your imageView variable
+            }
 
 
         mStudentNameViewMid.setOnTouchListener(this);
@@ -187,6 +184,7 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
         //Add the page to the front of the queue
         ((ViewPager) container).addView(page, 0);
 
+
         ((ViewPager) container).setOnPageChangeListener(new MyPageChangeListener());
 
         return page;
@@ -197,8 +195,7 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
 
     private void setViewContentFromIntent() {
         mSubjectTextViewTop.setText(AttendanceActivity.mSubCodeI);
-        mFacultyViewTop.setText(AttendanceActivity.mFacultyI);
-        mTeacherViewTop.setText(AttendanceActivity.mTeacherI);
+        mRollViewTop.setText((AttendanceActivity.mRoll1I)+"-"+AttendanceActivity.mRoll2I);
 
 
     }
@@ -210,9 +207,10 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
 
 
         mUser_dataAttRef = mDatabase.getReference()
-                .child(AttendanceActivity.mFacultyI)
-                .child(AttendanceActivity.mYearI)
-                .child("user_data")
+                .child("app")
+                .child("app_data")
+                .child(AttendanceActivity.dbLinkValue)
+                .child("users_data")
                 .child("students");
 
 
@@ -229,8 +227,9 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
 
             mNameList = AttendanceActivity.mNameList;
             mRollList = AttendanceActivity.mRollList;
+
+            if(AttendanceActivity.mPhotoUriList!=null)
             mPhotoUriList = AttendanceActivity.mPhotoUriList;
-            uIdList = AttendanceActivity.uIdList;
 
             sortData();
             limitRollRange();
@@ -251,14 +250,14 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
         int i = lowerIndex;
         int j = higherIndex;
         // calculate pivot number, I am taking pivot as middle index number
-        int pivot = Integer.parseInt(mRollList.get(lowerIndex+(higherIndex-lowerIndex)/2));
+        int pivot = Integer.parseInt((mRollList.get(lowerIndex+(higherIndex-lowerIndex)/2)).substring(6,8));
         // Divide into two arrays
         while (i <= j) {
 
-            while (Integer.parseInt(mRollList.get(i)) < pivot) {
+            while (Integer.parseInt((mRollList.get(i)).substring(6,8)) < pivot) {
                 i++;
             }
-            while (Integer.parseInt(mRollList.get(j)) > pivot) {
+            while (Integer.parseInt((mRollList.get(j)).substring(6,8)) > pivot) {
                 j--;
             }
             if (i <= j) {
@@ -282,17 +281,17 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
         mRollList.set(i,mRollList.get(j));
         mRollList.set(j,temp);
 
-         temp = uIdList.get(i);
-        uIdList.set(i,uIdList.get(j));
-        uIdList.set(j,temp);
 
          temp = mNameList.get(i);
         mNameList.set(i, mNameList.get(j));
         mNameList.set(j,temp);
 
-         Uri temp2 = mPhotoUriList.get(i);
-        mPhotoUriList.set(i, mPhotoUriList.get(j));
-        mPhotoUriList.set(j,temp2);
+        if(mPhotoUriList.size()!=0)
+        if(mPhotoUriList.get(i)!=null && mPhotoUriList.get(j)!=null) {
+            Uri temp2 = mPhotoUriList.get(i);
+            mPhotoUriList.set(i, mPhotoUriList.get(j));
+            mPhotoUriList.set(j, temp2);
+        }
     }
 
 
@@ -309,8 +308,10 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
                         mRollDisplayList.add(mRollList.get(j));
 
                         mNameDisplayList.add(mNameList.get(j));
+
+                        if(mPhotoUriList.size()!=0)
+                        if(mPhotoUriList.get(j)!=null)
                         mPhotoUriDisplayList.add(mPhotoUriList.get(j));
-                        mUidDisplayList.add(uIdList.get(j));
 
                     }
                     else
@@ -318,8 +319,10 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
                         mRollDisplayList.add(mRollList.get(j));
 
                         mNameDisplayList.add(mNameList.get(j));
-                        mPhotoUriDisplayList.add(mPhotoUriList.get(j));
-                        mUidDisplayList.add(uIdList.get(j));
+
+                        if(mPhotoUriList.size()!=0)
+                        if(mPhotoUriList.get(j)!=null)
+                            mPhotoUriDisplayList.add(mPhotoUriList.get(j));
 
                         j=mRollList.size();
                         i=mRollList.size();
@@ -349,10 +352,15 @@ class AttendanceAdapter extends PagerAdapter implements View.OnTouchListener {
 
 
 
+
+
     private class MyPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
         @Override
         public void onPageSelected(int position) {
+
+
             focusedPage = position;
+
         }
     }
 

@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class NewsMessageAdapter extends ArrayAdapter<NewsMessageInfoCollector> {
@@ -39,20 +37,23 @@ public class NewsMessageAdapter extends ArrayAdapter<NewsMessageInfoCollector> {
 
 
 
-        boolean isPhoto = (newsMessage.getPhotoUrl() != null);
+        boolean isPhoto = (newsMessage.getContent_url() != null);
         if (isPhoto) {
-            newsTextView.setVisibility(View.GONE);
+            newsTextView.setVisibility(View.VISIBLE);
             photoImageView.setVisibility(View.VISIBLE);
             Glide.with(photoImageView.getContext())
-                    .load(newsMessage.getPhotoUrl())
+                    .load(newsMessage.getContent_url())
                     .into(photoImageView);
+
+            newsTextView.setText(newsMessage.getContent_txt());
+
         } else {
             newsTextView.setVisibility(View.VISIBLE);
             photoImageView.setVisibility(View.GONE);
-            newsTextView.setText(newsMessage.getNews());
+            newsTextView.setText(newsMessage.getContent_txt());
         }
 
-        senderNameTextView.setText("Sent By : " + newsMessage.getSender());
+        senderNameTextView.setText("Sent By : " + newsMessage.getBy());
         dateDayTextView.setText(newsMessage.getdate() + " : " + newsMessage.getday());
         timeTextView.setText(newsMessage.getTime());
         titleTextView.setText("Title:"+newsMessage.getTitle());

@@ -23,8 +23,12 @@
           }
         },
         {
-          "client_id": "591557944598-qiekq1v0afnbf0bfoh7mi2ijni7cejli.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "591557944598-q9hi14magcblkt8flqu8ombffv1frq0e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.minorproject.admin.sas",
+            "certificate_hash": "53f43119618ec50ee2338022d950e6375eac01c5"
+          }
         },
         {
           "client_id": "591557944598-qiekq1v0afnbf0bfoh7mi2ijni7cejli.apps.googleusercontent.com",

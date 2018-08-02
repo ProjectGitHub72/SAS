@@ -40,7 +40,6 @@ import java.util.List;
 
 public class NewsAdderActivity extends AppCompatActivity {
 
-    public static final int DEFAULT_MSG_LENGTH_LIMIT = 200;
     private static final int RC_PHOTO_PICKER =  2;
 
     private NewsMessageAdapter mNewsAdapter;
@@ -61,7 +60,7 @@ public class NewsAdderActivity extends AppCompatActivity {
     private boolean isTextReady=false;
     private  boolean isImageReady=false;
     private final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
+    private String DBLinkValue;
 
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -69,9 +68,6 @@ public class NewsAdderActivity extends AppCompatActivity {
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mNewsPhotoStorageReference;
 
-    private static loginInfo_Collector mLoginResultObject;
-
-    private SharedPreferences mSharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,22 +79,23 @@ public class NewsAdderActivity extends AppCompatActivity {
 
         mTitle=null;
 
-        mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        obtainPreference();
+        Intent intent = getIntent();
+        mSenderName = intent.getStringExtra("USERNAME");
+        DBLinkValue = intent.getStringExtra("DBKEY");
+
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
 
         mNewsDatabaseReference = mFirebaseDatabase.getReference()
-                .child(mLoginResultObject.getFaculty_symbol())
-                .child(mLoginResultObject.getYear())
-                .child("notice_node");
+                .child("app")
+                .child("app_data")
+                .child(DBLinkValue)
+                .child("news_database");
 
         mNewsPhotoStorageReference = mFirebaseStorage.getReference()
-                .child(mLoginResultObject.getFaculty_symbol())
-                .child(mLoginResultObject.getYear())
-                .child("notice_node");
+                .child("news_photos");
 
 
         mPhotoPickerButton =  findViewById(R.id.photoPickerButton);
@@ -108,9 +105,6 @@ public class NewsAdderActivity extends AppCompatActivity {
         mImageUrl = findViewById(R.id.imageUrlEditText);
         mNewsListView = findViewById(R.id.newsListView2);
 
-
-        Intent intent = getIntent();
-       mSenderName = intent.getStringExtra("UserValue");
 
 
 
@@ -155,11 +149,11 @@ public class NewsAdderActivity extends AppCompatActivity {
 
 
                 if(isTextReady) {
-                     mNewsMessage = new NewsMessageInfoCollector(mTitle, mNewsEditText.getText().toString(), mSenderName, null, mDay, formattedDate, formattedTime);
+                     mNewsMessage = new NewsMessageInfoCollector(mTitle, mNewsEditText.getText().toString(), mSenderName, null, mDay, formattedDate, formattedTime,"txt");
                 }
 
                 else if(isImageReady)
-                     mNewsMessage = new NewsMessageInfoCollector(mTitle,null,mSenderName, mImageURI,mDay,formattedDate,formattedTime);
+                     mNewsMessage = new NewsMessageInfoCollector(mTitle,mNewsEditText.getText().toString(),mSenderName, mImageURI,mDay,formattedDate,formattedTime,"url");
 
 
                 addToDatabase(mNewsMessage);
@@ -169,9 +163,6 @@ public class NewsAdderActivity extends AppCompatActivity {
                 mTitleEditText.setText("");
                 mImageUrl.setText("");
 
-
-//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-//                        new NewsFragment()).commit();
 
                 Intent intent =  new Intent(NewsAdderActivity.this,MainActivity.class);
                 intent.putExtra("FRAGMENT","NOTICE");
@@ -214,17 +205,19 @@ public class NewsAdderActivity extends AppCompatActivity {
 
                 mSendButton.setEnabled(true);
                 isTextReady =true;
+                isImageReady=false;
 
             }
 
             else if(
                     mTitleEditText.getText().toString().length() >0 &&
-                            (mNewsEditText.getText().toString().length() == 0) &&
+                            (mNewsEditText.getText().toString().length()> 0) &&
                             mImageUrl.getText().toString().length() > 0
                     )            {
 
                 mSendButton.setEnabled(true);
                 isImageReady=true;
+                isTextReady=false;
 
             }
 
@@ -305,7 +298,7 @@ public class NewsAdderActivity extends AppCompatActivity {
      * Return the formatted date string (i.e. "Mar 3, 1984") from a Date object.
      */
     private String formatDate(Date dateObject) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("LLL dd, yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         return dateFormat.format(dateObject);
     }
 
@@ -397,16 +390,6 @@ public class NewsAdderActivity extends AppCompatActivity {
     }
 
 
-    private void obtainPreference() {
-        mLoginResultObject = new loginInfo_Collector(
-                mSharedPref.getString(getString(R.string.NAME), ""),
-                mSharedPref.getString(getString(R.string.ROLL), ""),
-                mSharedPref.getString(getString(R.string.FACULTY), ""),
-                mSharedPref.getString(getString(R.string.YEAR), ""),
-                mSharedPref.getString(getString(R.string.PHOTO_URL), ""),
-                mSharedPref.getInt(getString(R.string.PRIORITY), 0)
-        );
-    }
 
     public String randomAlphaNumeric(int count) {
         StringBuilder builder = new StringBuilder();
@@ -418,38 +401,3 @@ public class NewsAdderActivity extends AppCompatActivity {
     }
 
 }
-
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
-//            Uri selectedImageUri = data.getData();
-//            final StorageReference photoRef = mNewsPhotoStorageReference.child(selectedImageUri.getLastPathSegment());
-//            photoRef.putFile(selectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//                    // create a calendar
-//                    Calendar calendar = Calendar.getInstance();
-//                    Date date = new Date(calendar.getTimeInMillis());
-//
-//                    formattedDate = formatDate(date);
-//                    formattedTime = formatTime(date);
-//
-//                    getCurrentDay();
-//
-//
-//                    mImageURI = photoRef.getDownloadUrl().toString();
-//
-//                    mImageUrl.setText(mImageURI);
-//
-//                }
-//            });
-//        }
-//        else if(requestCode==RC_PHOTO_PICKER && resultCode == RESULT_CANCELED){
-//            Toast.makeText(this, "Not an Image", Toast.LENGTH_SHORT).show();
-//        }
-//
-//    }

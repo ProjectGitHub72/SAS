@@ -4,35 +4,27 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".AttendanceActivity"
-    android:background="@color/colorPrimary">
+    android:background="@color/black_overlay">
 
-    <TextView
-        android:id="@+id/faculty_permA_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Faculty"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:layout_alignParentRight="true"/>
 
     <TextView
         android:id="@+id/subject_permA_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/faculty_permA_view"
+        android:paddingTop="10dp"
         android:layout_marginTop="2dp"
         android:paddingRight="10dp"
         android:text="Subject"
         android:layout_alignParentRight="true"/>
 
     <TextView
-        android:id="@+id/teacher_permA_view"
+        android:id="@+id/rollRange_permA_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/subject_permA_view"
         android:layout_marginTop="2dp"
         android:paddingRight="10dp"
-        android:text="Teacher"
+        android:text="72001-72044"
         android:layout_alignParentRight="true"/>
 
 
@@ -61,7 +53,7 @@
         android:layout_width="170dp"
         android:layout_height="170dp"
         android:scaleType="centerCrop"
-        android:src="@mipmap/ic_launcher_round"
+        android:src="@drawable/ic_launcher_foreground11"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
 

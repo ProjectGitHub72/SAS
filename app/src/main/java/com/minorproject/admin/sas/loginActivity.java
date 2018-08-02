@@ -2,7 +2,6 @@ package com.minorproject.admin.sas;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -12,67 +11,41 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.RadioButton;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+
 
 
 public class loginActivity extends AppCompatActivity{
 
 
-    private EditText mNameEditText;
-    private EditText mRollEditText;
-    private EditText mFacultyEditText;
-    private EditText mPermissionKeyEditText;
+    private EditText mEmailEditText;
+    private EditText mDbLinkEditText;
+    private EditText mIdentifierEditText;
+    private RadioButton mStudentRB;
+    private RadioButton mTeacherRB;
     private Button mSubmitButton;
-    private ImageButton mImagePickerButton;
-    private EditText mJoinYearEditText;
-    private TextView mSelectedImageUrl_textView;
 
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mUserListRef;
-    private DatabaseReference mUserInfoDbRef;
-
-    private FirebaseStorage mStorage;
-    private StorageReference mUserPicStorageRef;
-
-
-    private String name;
-    private String roll_no;
-    private String photo_url;
-    private int priority_level;
-    private String faculty_symbol;
-    private String year;
-    private String permission_key;
-
-    private Uri photo_store_uri;
-    private static final int RC_PHOTO_PICKER =  2;
-
-    private boolean isImageReady = false;
-    private boolean imageUriloaded = false;
-
-
-    private  String teacherKey = "";
-    private  String adminKey = "";
+    private DatabaseReference mdbLink_Ref;
+    private DatabaseReference mNewUserInfoDbRef;
+    private DatabaseReference mPreStoredInfoRef;
 
     private FirebaseUser mUser;
 
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mPrefEditor;
+    private String DbLink_Key;
+    private String firstName;
+    private String lastName;
+    private String photoUrl;
+    private int priority=2;
+
+
 
 
     @Override
@@ -82,26 +55,23 @@ public class loginActivity extends AppCompatActivity{
 
         setTitle("Login Manager");
 
-        mNameEditText = findViewById(R.id.name_login_editText);
-        mRollEditText = findViewById(R.id.roll_login_editText);
-        mFacultyEditText = findViewById(R.id.faculty_login_editText);
-        mPermissionKeyEditText = findViewById(R.id.priority_login_EditText);
-        mSubmitButton = findViewById(R.id.submit_login_button);
-        mJoinYearEditText = findViewById(R.id.join_year_editText);
-        mSelectedImageUrl_textView = findViewById(R.id.imageUrl_login_textMain);
-        mImagePickerButton = findViewById(R.id.imageButton_login);
+        mEmailEditText = findViewById(R.id.Email_Login_ET);
+        mDbLinkEditText = findViewById(R.id.DBLink_Login_ET);
+        mIdentifierEditText = findViewById(R.id.UIdentifier_Login_ET);
+        mStudentRB = findViewById(R.id.RadioStudent_LoginET);
+        mTeacherRB = findViewById(R.id.RadioTeacher_LoginET);
+        mSubmitButton = findViewById(R.id.SubmitButton_Login_ET);
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mPrefEditor = mSharedPreferences.edit();
 
+        mUser = MainActivity.UserInstanceForFragment();
 
 
         mSubmitButton.setEnabled(false);
+        mStudentRB.setChecked(false);
+        mTeacherRB.setChecked(false);
 
-        mUser = MainActivity.UserInstanceForFragment();
         newLoginLoad();
 
-        setViewLimiters();
 
 
 
@@ -109,39 +79,27 @@ public class loginActivity extends AppCompatActivity{
 
     private void setViewLimiters() {
 
+        if(mUser!=null)
+        mEmailEditText.setText(mUser.getEmail());
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-                if(permission_key.contentEquals(teacherKey))
-                    priority_level = 1;
-                else if(permission_key.contentEquals(adminKey))
-                    priority_level = 2;
-                else
-                    priority_level = 0;
 
-                    loginInfo_Collector mNewLoginResult;
-
-                    mNewLoginResult = new loginInfo_Collector(
-                            name,roll_no,faculty_symbol,year,photo_url,priority_level
-                    );
-
-
-                    addToDatabase(mNewLoginResult);
+            addToUsersDatabase();
 
                 // Clear input box
-                mNameEditText.setText("");
-                mRollEditText.setText("");
-                mFacultyEditText.setText("");
-                mJoinYearEditText.setText("");
-                mSelectedImageUrl_textView.setText("");
-                mPermissionKeyEditText.setText("");
-
+                mEmailEditText.setText("");
+                mDbLinkEditText.setText("");
+                mIdentifierEditText.setText("");
+                mStudentRB.setChecked(false);
+                mTeacherRB.setChecked(false);
 
                 mSubmitButton.setEnabled(false);
-                Toast.makeText(loginActivity.this, "Profile Complete", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(loginActivity.this, "Ready to Begin", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(loginActivity.this,MainActivity.class);
                     startActivity(intent);
 
@@ -149,42 +107,183 @@ public class loginActivity extends AppCompatActivity{
         });
 
 
-
-
-        // ImagePickerButton shows an image picker to upload a image for a message
-        mImagePickerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
-            }
-        });
-
        editTextListeners();
 
 
     }
 
+    private void checkDatabaseLink() {
 
-    private void addToDatabase(loginInfo_Collector newLogin) {
+        mDatabase = FirebaseDatabase.getInstance();
 
-        mUserInfoDbRef.child(mUser.getUid()).setValue(newLogin);
-            mUserListRef.child(mUser.getUid()).setValue(name);
+        mdbLink_Ref = mDatabase.getReference().child("app")
+                .child("database_link")
+                .child(mDbLinkEditText.getText().toString().trim());
 
-            preferenceHandler();
+
+
+        mdbLink_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+              if(dataSnapshot.getValue()!=null) {
+                  DbLink_Key = dataSnapshot.getValue().toString();
+                  copyDatabase();
+              }
+              else
+                  Toast.makeText(loginActivity.this, "Database Link Failed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                Toast.makeText(loginActivity.this, "Database Link Failed", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
+
+
+    }
+
+    private void copyDatabase() {
+
+        if(mStudentRB.isChecked()) {
+            mPreStoredInfoRef = mDatabase.getReference().child("app")
+                    .child("app_data")
+                    .child(DbLink_Key)
+                    .child("users_data")
+                    .child("students")
+                    .child(mIdentifierEditText.getText().toString().trim())
+                    .child("infoData");
+
+        }
+
+        else if(mTeacherRB.isChecked()){
+            mPreStoredInfoRef = mDatabase.getReference().child("app")
+                    .child("app_data")
+                    .child(DbLink_Key)
+                    .child("users_data")
+                    .child("teachers")
+                    .child(mIdentifierEditText.getText().toString().trim())
+                    .child("infoData");
+
+        }
+
+        mPreStoredInfoRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue()!=null){
+
+                    if(dataSnapshot.hasChild("accountLinks")
+                            &&dataSnapshot.child("accountLinks").hasChild(mDbLinkEditText.getText().toString().trim())) {
+                        priority = Integer.parseInt(dataSnapshot
+                                .child("accountLinks")
+                                .child(mDbLinkEditText.getText().toString().trim())
+                                .getValue().toString());
+                    }
+                    else{
+                        Toast.makeText(loginActivity.this, "Data Not Available", Toast.LENGTH_SHORT).show();
+
+                    }
+                  if(dataSnapshot.child("info").hasChild("firstName")
+                          &&dataSnapshot.child("info").hasChild("lastName")) {
+                      firstName = dataSnapshot.child("info").child("firstName").getValue().toString();
+                      lastName = dataSnapshot.child("info").child("lastName").getValue().toString();
+
+                      if(dataSnapshot.child("info").child("photoUrl").exists())
+                      photoUrl = dataSnapshot.child("info").child("photoUrl").getValue().toString();
+
+                      mSubmitButton.setEnabled(true);
+                  }
+                  else{
+                      Toast.makeText(loginActivity.this, "Data Not Available", Toast.LENGTH_SHORT).show();
+                  }
+                }
+
+                else {
+                    Toast.makeText(loginActivity.this, "No Data Available", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                Toast.makeText(loginActivity.this, "Database Info Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+
+
+
+
+    }
+
+
+    private void addToUsersDatabase() {
+
+        mNewUserInfoDbRef.child(mUser.getUid())
+                .child("accountLinks")
+                .child(mDbLinkEditText.getText().toString().trim())
+                .setValue(priority);
+
+        mNewUserInfoDbRef.child(mUser.getUid()).child("info").child("firstName").setValue(firstName);
+        mNewUserInfoDbRef.child(mUser.getUid()).child("info").child("lastName").setValue(lastName);
+        mNewUserInfoDbRef.child(mUser.getUid()).child("info").child("photoUrl").setValue(photoUrl);
+        mNewUserInfoDbRef.child(mUser.getUid()).child("customID").setValue(mIdentifierEditText.getText().toString().trim());
+
+        if(mStudentRB.isChecked()) {
+            mPreStoredInfoRef = mDatabase.getReference().child("app")
+                    .child("app_data")
+                    .child(DbLink_Key)
+                    .child("users_data")
+                    .child("students")
+                    .child(mIdentifierEditText.getText().toString().trim());
+
+        }
+
+        else if(mTeacherRB.isChecked()){
+            mPreStoredInfoRef = mDatabase.getReference().child("app")
+                    .child("app_data")
+                    .child(DbLink_Key)
+                    .child("users_data")
+                    .child("teachers")
+                    .child(mIdentifierEditText.getText().toString().trim());
+
+        }
+
+        mPreStoredInfoRef.child("claimedBy").setValue(mUser.getUid());
+        mPreStoredInfoRef.child("infoData").setValue("");
+
+
 
 
     }
 
     private void editTextListeners() {
 
-        mNameEditText.addTextChangedListener(watcher);
-        mRollEditText.addTextChangedListener(watcher);
-        mFacultyEditText.addTextChangedListener(watcher);
-        mJoinYearEditText.addTextChangedListener(watcher);
-        mPermissionKeyEditText.addTextChangedListener(watcher);
+        mEmailEditText.addTextChangedListener(watcher);
+        mDbLinkEditText.addTextChangedListener(watcher);
+        mIdentifierEditText.addTextChangedListener(watcher);
+        mStudentRB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mStudentRB.setChecked(true);
+                mTeacherRB.setChecked(false);
+                checkConditions();
+            }
+        });
+
+        mTeacherRB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTeacherRB.setChecked(true);
+                mStudentRB.setChecked(false);
+                checkConditions();
+            }
+        });
     }
 
 
@@ -198,154 +297,24 @@ public class loginActivity extends AppCompatActivity{
         @Override
         public void afterTextChanged(Editable s) {
 
-            if(
-                             mNameEditText.getText().toString().length() >0 &&
-                              mRollEditText.getText().toString().length() > 0 &&
-                            mFacultyEditText.getText().toString().length() >0 &&
-                            mJoinYearEditText.getText().toString().length() > 0 &&
-                            mPermissionKeyEditText.getText().toString().length() >0 &&
-                            isImageReady
-                    )            {
-
-                        loadDataFromView();
-            }
-
-            else
-                mSubmitButton.setEnabled(false);
+         checkConditions();
 
         }
     };
 
+    private void checkConditions() {
+        if(
+                mEmailEditText.getText().toString().length() >0 &&
+                        mDbLinkEditText.getText().toString().length() > 0 &&
+                        mIdentifierEditText.getText().toString().length() >0 &&
+                        (mStudentRB.isChecked() || mTeacherRB.isChecked())
+                )            {
 
-
-    private void loadDataFromView() {
-
-        name = mNameEditText.getText().toString();
-        roll_no = mRollEditText.getText().toString().trim();
-        faculty_symbol = mFacultyEditText.getText().toString().trim().toUpperCase();
-        permission_key = mPermissionKeyEditText.getText().toString().trim();
-        year = mJoinYearEditText.getText().toString().trim();
-//TODo: each node => 2 key for each faculty
-
-        loadDatabase();
-
-
-        mSubmitButton.setEnabled(true);
-
-
-    }
-
-    private void loadDatabase() {
-
-
-
-        mDatabase = FirebaseDatabase.getInstance();
-
-        mDatabase.getReference().child("Priority_Key").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot key : dataSnapshot.getChildren() ){
-                    if(key.getKey().contentEquals("ADMIN"))
-                        adminKey = key.getValue().toString();
-                    if(key.getKey().contentEquals("TEACHER"))
-                        teacherKey = key.getValue().toString();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        mUserListRef = mDatabase.getReference().child("UserList");
-        mUserInfoDbRef = mDatabase.getReference().child(faculty_symbol).child(year).child("users");
-
-        if(!imageUriloaded) {
-            mStorage = FirebaseStorage.getInstance();
-            mUserPicStorageRef = mStorage.getReference().child(faculty_symbol).child(year).child("user_pics");
-
-            loadStorageData();
-        }
-    }
-
-    private void loadStorageData() {
-//        final StorageReference photoRef = mUserPicStorageRef.child(mUser.getUid());
-//        photoRef.putFile(photo_store_uri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//
-//                photo_url = photoRef.getDownloadUrl().toString();
-//
-//                mSelectedImageUrl_textView.setText(photo_url);
-//
-//                isImageReady = true;
-//                imageUriloaded = true;
-//
-//
-//
-//            }
-//        });
-
-
-
-            final StorageReference photoRef = mUserPicStorageRef.child(mUser.getUid());
-            UploadTask uploadTask = photoRef.putFile(photo_store_uri);
-
-            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-
-                    // Continue with the task to get the download URL
-                    return photoRef.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-
-
-                        photo_url = task.getResult().toString();
-
-                        mSelectedImageUrl_textView.setText(photo_url);
-
-                        isImageReady = true;
-                        imageUriloaded = true;
-
-                    }
-                }
-            });
-
-
-
-
+            checkDatabaseLink();
         }
 
-
-
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
-            photo_store_uri = data.getData();
-
-            isImageReady = true;
-        }
-        else if(requestCode==RC_PHOTO_PICKER && resultCode == RESULT_CANCELED){
-            Toast.makeText(this, "Not an Image", Toast.LENGTH_SHORT).show();
-
-            isImageReady = false;
-
-        }
-
-
+        else
+            mSubmitButton.setEnabled(false);
     }
 
 
@@ -361,10 +330,10 @@ public class loginActivity extends AppCompatActivity{
         Toast.makeText(this, "Checking Data", Toast.LENGTH_SHORT).show();
 
         mDatabase = FirebaseDatabase.getInstance();
-        mUserListRef = mDatabase.getReference().child("UserList");
+        mNewUserInfoDbRef = mDatabase.getReference().child("app").child("users");
 
 
-        mUserListRef.addValueEventListener(new ValueEventListener() {
+        mNewUserInfoDbRef.addValueEventListener(new ValueEventListener() {
             @Override
 
 
@@ -383,6 +352,7 @@ public class loginActivity extends AppCompatActivity{
                 if(count!=0)
                     startActivity(new Intent(loginActivity.this,MainActivity.class));
                 else{
+                    setViewLimiters();
                     Toast.makeText(loginActivity.this, "Fill all fields", Toast.LENGTH_SHORT).show();
                 }
 
@@ -391,36 +361,13 @@ public class loginActivity extends AppCompatActivity{
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                Toast.makeText(loginActivity.this, "Problem Accessing Database", Toast.LENGTH_SHORT).show();
             }
         });
 
 
     }
 
-    private void preferenceHandler(){
-
-        mPrefEditor.putString(getString(R.string.NAME),name);
-        mPrefEditor.commit();
-
-        mPrefEditor.putString(getString(R.string.FACULTY),faculty_symbol);
-        mPrefEditor.commit();
-
-        mPrefEditor.putString(getString(R.string.ROLL),roll_no);
-        mPrefEditor.commit();
-
-        mPrefEditor.putString(getString(R.string.YEAR),year);
-        mPrefEditor.commit();
-
-        mPrefEditor.putString(getString(R.string.PHOTO_URL),photo_url);
-        mPrefEditor.commit();
-
-        mPrefEditor.putInt(getString(R.string.PRIORITY),priority_level);
-        mPrefEditor.commit();
-
-
-
-
-    }
         
         
     }
