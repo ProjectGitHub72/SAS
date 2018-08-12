@@ -78,6 +78,11 @@ public class PerformanceFragment extends Fragment {
 
             if(!MainActivity.noInternet)
                 findDblinkKey(root);
+            else{
+
+                mProgressBar.setVisibility(View.GONE);
+                mNoDataView.setVisibility(View.VISIBLE);
+            }
 
 
         return root;

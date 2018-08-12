@@ -50,6 +50,8 @@ public class AttendanceFragment extends Fragment {
         mRollCall2 = rootView.findViewById(R.id.roll2_attend_editText);
         mBeginButton = rootView.findViewById(R.id.begin_attend_button);
 
+        getActivity().setTitle("Class Information");
+
 
         setViewLimiters();
 

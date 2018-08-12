@@ -255,7 +255,7 @@ public class loginActivity extends AppCompatActivity{
         }
 
         mPreStoredInfoRef.child("claimedBy").setValue(mUser.getUid());
-        mPreStoredInfoRef.child("infoData").setValue("");
+        mPreStoredInfoRef.child("infoData").setValue(null);
 
 
 

@@ -51,11 +51,11 @@
     <ImageView
         android:id="@+id/student_image_attend"
         android:layout_width="170dp"
-        android:layout_height="170dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_foreground11"
+        android:layout_height="172dp"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_foreground11" />
 
     <TextView
         android:layout_width="wrap_content"

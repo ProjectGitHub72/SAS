@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/background"
     android:padding="10dp"
     tools:context=".ProfileActivity">
 
@@ -136,7 +137,7 @@
             android:paddingLeft="20dp"
             android:paddingTop="20dp"
             android:paddingBottom="2dp"
-            android:text="New Password ( >5 )"
+            android:text="Confirm Password ( >5 )"
             style="@style/CategoryStyle"
             android:textColor="@android:color/black"/>
 
